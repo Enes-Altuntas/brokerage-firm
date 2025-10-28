@@ -8,6 +8,7 @@ import com.inghubs.adapters.outbox.jpa.entity.OutboxEntity;
 import com.inghubs.adapters.outbox.jpa.service.OutboxDataService;
 import com.inghubs.order.model.Order;
 import com.inghubs.order.port.OrderPort;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +46,10 @@ public class OrderDataAdapter implements OrderPort {
         .aggregateType("ORDER")
         .eventType("ORDER_CREATED")
         .isProcessed(false)
+        .createdAt(Instant.now())
+        .updatedAt(Instant.now())
+        .createdBy("SYSTEM")
+        .updatedBy("SYSTEM")
         .build();
   }
 }

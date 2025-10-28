@@ -1,5 +1,5 @@
 server:
-  port: 9042
+  port: 9041
 
 spring:
   application:
@@ -12,6 +12,8 @@ spring:
   elasticsearch:
     rest:
       uris: http://localhost:9200
+  kafka:
+    bootstrap-servers: localhost:29092
   jpa:
     hibernate:
       ddl-auto: update
