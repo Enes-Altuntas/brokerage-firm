@@ -1,14 +1,17 @@
 server:
-  port: 9041
+  port: 9042
 
 spring:
   application:
-    name: order-command-service
+    name: order-query-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/order
+    url: jdbc:postgresql://localhost:5433/asset
     username: admin
     password: admin
     driver-class-name: org.postgresql.Driver
+  elasticsearch:
+    rest:
+      uris: http://localhost:9200
   jpa:
     hibernate:
       ddl-auto: update
