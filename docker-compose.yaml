@@ -11,17 +11,31 @@ services:
     volumes:
       - redis-data:/data
 
-  postgres:
-    container_name: postgres
+  assetdb:
+    container_name: assetdb
     image: postgres:latest
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=brokerage
+      - POSTGRES_DB=asset
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-asset-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    command: ["postgres", "-c", "wal_level=logical", "-c", "max_replication_slots=10", "-c", "max_wal_senders=10"]
+
+  orderdb:
+    container_name: orderdb
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=order
+    volumes:
+      - postgres-order-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    command: ["postgres", "-c", "wal_level=logical", "-c", "max_replication_slots=10", "-c", "max_wal_senders=10"]
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
@@ -49,30 +63,17 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
 
-  schema-registry:
-    image: confluentinc/cp-schema-registry:7.4.0
-    container_name: schema-registry
-    depends_on:
-      - kafka
-    ports:
-      - "8091:8081"
-    environment:
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
-
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
     depends_on:
       - kafka
-      - schema-registry
     ports:
       - "8080:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: cluster
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
-      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
@@ -100,7 +101,25 @@ services:
     ports:
       - 5601:5601
 
+  connect:
+    image: debezium/connect:2.6.1.Final
+    container_name: connect
+    depends_on:
+      - kafka
+      - orderdb
+      - assetdb
+    ports:
+      - "8083:8083"
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9092
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: connect_configs
+      OFFSET_STORAGE_TOPIC: connect_offsets
+      STATUS_STORAGE_TOPIC: connect_statuses
+      CONNECT_PLUGIN_PATH: /kafka/connect
+
 volumes:
-  postgres-data:
+  postgres-asset-data:
+  postgres-order-data:
   redis-data:
   elasticsearch-data:
