@@ -7,14 +7,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import java.time.Instant;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
@@ -27,19 +26,18 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, allowGetters = true)
 public class BaseEntity {
 
-  @CreationTimestamp
+  @CreatedDate
   @Column(updatable = false)
   @JsonSerialize(using = InstantSerializer.class)
-  private Instant createdAt = Instant.now();
+  private Instant createdAt;
 
-  @UpdateTimestamp
+  @LastModifiedDate
   @JsonSerialize(using = InstantSerializer.class)
-  private Instant updatedAt = Instant.now();
+  private Instant updatedAt;
 
   @JsonSerialize(using = InstantSerializer.class)
   private Instant deletedAt;
 
   private String createdBy;
   private String updatedBy;
-
 }

@@ -5,6 +5,7 @@ import com.inghubs.order.command.CreateOrderCommand;
 import com.inghubs.order.model.enums.OrderSide;
 import com.inghubs.order.model.enums.OrderStatus;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -40,7 +41,8 @@ public class Order extends BaseDomain {
         .status(OrderStatus.INIT)
         .createdBy(command.getCustomerId().toString())
         .updatedBy(command.getCustomerId().toString())
+        .createdAt(Instant.now())
+        .updatedAt(Instant.now())
         .build();
   }
-
 }

@@ -2,9 +2,7 @@ package com.inghubs.adapters.outbox.jpa.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.inghubs.common.jpa.entity.BaseEntity;
-import com.inghubs.common.util.JsonNodeConverterUtil;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,7 +11,6 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -44,16 +41,14 @@ public class OutboxEntity extends BaseEntity {
   private String eventType;
 
   @JdbcTypeCode(SqlTypes.JSON)
-  @Convert(converter = JsonNodeConverterUtil.class)
-  @Column(columnDefinition = "jsonb")
+  @Column(columnDefinition = "jsonb", updatable = false)
   private JsonNode payload;
 
   @Column(name = "processed_at")
   private Instant processedAt;
 
   @Column(name = "processed", nullable = false)
-  @Builder.Default
-  private Boolean isProcessed = false;
+  private Boolean isProcessed;
 
   @Column(name = "request_id")
   private String requestId;
