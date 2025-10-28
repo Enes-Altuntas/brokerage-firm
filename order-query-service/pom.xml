@@ -12,6 +12,7 @@
   <groupId>com.inghubs</groupId>
   <artifactId>order-query-service</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
   <name>order-query-service</name>
   <description>order-query-service</description>
   <url/>
@@ -21,6 +22,11 @@
   <developers>
     <developer/>
   </developers>
+  <modules>
+    <module>application</module>
+    <module>domain</module>
+    <module>infrastructure</module>
+  </modules>
   <scm>
     <connection/>
     <developerConnection/>
