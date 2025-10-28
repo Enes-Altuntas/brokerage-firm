@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,9 +28,11 @@ public class OrderController extends BaseController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity<GenericResponse<CreateOrderResponse>> createOrder(@Valid @RequestBody CreateOrderRequest request) {
+  public ResponseEntity<GenericResponse<CreateOrderResponse>> createOrder(
+      @RequestHeader(name = "x-customer-id")  UUID customerId,
+      @Valid @RequestBody CreateOrderRequest request) {
 
-    CreateOrderCommand command = request.toCommand();
+    CreateOrderCommand command = request.toCommand(customerId);
 
     Order dto = publish(Order.class, command);
 
@@ -41,9 +44,14 @@ public class OrderController extends BaseController {
 
   @PutMapping("/cancel/{orderId}")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<GenericResponse<Void>> cancelOrder(@PathVariable UUID orderId) {
+  public ResponseEntity<GenericResponse<Void>> cancelOrder(
+      @RequestHeader(name = "x-customer-id")  UUID customerId,
+      @PathVariable UUID orderId) {
 
-    CancelOrderCommand command = CancelOrderCommand.builder().orderId(orderId).build();
+    CancelOrderCommand command = CancelOrderCommand.builder()
+        .orderId(orderId)
+        .customerId(customerId)
+        .build();
 
     publish(command);
 
