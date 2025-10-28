@@ -19,7 +19,7 @@ public class OrderDataAdapter implements OrderPort {
   private final OrderRepository orderRepository;
   private final OutboxDataService outboxDataService;
 
-  private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper;
 
   @Override
   @Transactional

@@ -1,5 +1,7 @@
 package com.inghubs.adapters.order.rest.model.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer;
 import com.inghubs.order.model.Order;
 import com.inghubs.order.model.enums.OrderStatus;
 import java.time.Instant;
@@ -13,6 +15,7 @@ public record CreateOrderResponse(
 
     OrderStatus status,
 
+    @JsonSerialize(using = InstantSerializer.class)
     Instant createdAt
 
 ) {
