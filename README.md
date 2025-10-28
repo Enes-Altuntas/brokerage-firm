@@ -23,7 +23,7 @@ curl --location 'http://localhost:8083/connectors' \
 }
 }'
 
-Debezzium Connector Curl For Asset DB:
+Debezzium Connector Curl For Order DB:
 
 curl --location 'http://localhost:8083/connectors' \
 --header 'Content-Type: application/json' \
