@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class CreateOrderCommand implements Command {
+public class CancelOrderCommand implements Command {
 
   private UUID outboxId;
 

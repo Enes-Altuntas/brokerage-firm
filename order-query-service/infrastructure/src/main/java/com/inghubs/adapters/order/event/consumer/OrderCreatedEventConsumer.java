@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inghubs.adapters.order.event.consumer.model.OutboxEvent;
 import com.inghubs.common.command.BeanAwareCommandPublisher;
+import com.inghubs.common.model.Command;
+import com.inghubs.order.command.CancelOrderCommand;
 import com.inghubs.order.command.CreateOrderCommand;
+import com.inghubs.order.command.UpdateOrderCommand;
 import com.inghubs.order.model.Order;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,9 @@ public class OrderCreatedEventConsumer extends BeanAwareCommandPublisher {
   public static final String OPERATION = "op";
   public static final String CREATE = "c";
   public static final String AFTER = "after";
+  public static final String ORDER_CREATED = "ORDER_CREATED";
+  public static final String ORDER_UPDATED = "ORDER_UPDATED";
+  public static final String ORDER_CANCELLED = "ORDER_CANCELLED";
   private final ObjectMapper objectMapper;
 
   @RetryableTopic(
@@ -41,18 +47,17 @@ public class OrderCreatedEventConsumer extends BeanAwareCommandPublisher {
 
       OutboxEvent outboxEvent = objectMapper.treeToValue(rootNode.get(AFTER), OutboxEvent.class);
 
-      if(!outboxEvent.getEventType().equals("ORDER_CREATED")) {
+      if(!outboxEvent.getEventType().equals(ORDER_CREATED)
+          && !outboxEvent.getEventType().equals(ORDER_UPDATED)
+          && !outboxEvent.getEventType().equals(ORDER_CANCELLED)) {
         acknowledgment.acknowledge();
         return;
       }
 
       Order order = objectMapper.readValue(outboxEvent.getPayload().asText(), Order.class);
-      CreateOrderCommand createOrderCommand = CreateOrderCommand.builder()
-          .outboxId(outboxEvent.getId())
-          .order(order)
-          .build();
+      Command command = buildCommand(outboxEvent, order);
 
-      publish(createOrderCommand);
+      publish(command);
       acknowledgment.acknowledge();
 
     } catch (Exception e) {
@@ -64,5 +69,29 @@ public class OrderCreatedEventConsumer extends BeanAwareCommandPublisher {
   public void consumeCreateOrderOutboxEventDLT(@Headers Map<String, Object> headers, String eventPayload,
       Acknowledgment acknowledgment) {
     acknowledgment.acknowledge();
+  }
+
+  private Command buildCommand(OutboxEvent outboxEvent, Order order) {
+    return switch (outboxEvent.getEventType()) {
+      case ORDER_CREATED -> CreateOrderCommand.builder()
+          .outboxId(outboxEvent.getId())
+          .eventType(outboxEvent.getEventType())
+          .order(order)
+          .build();
+
+      case ORDER_UPDATED -> UpdateOrderCommand.builder()
+          .outboxId(outboxEvent.getId())
+          .eventType(outboxEvent.getEventType())
+          .order(order)
+          .build();
+
+      case ORDER_CANCELLED -> CancelOrderCommand.builder()
+          .outboxId(outboxEvent.getId())
+          .eventType(outboxEvent.getEventType())
+          .order(order)
+          .build();
+
+      default -> throw new IllegalArgumentException("Unknown event type: " + outboxEvent.getEventType());
+    };
   }
 }

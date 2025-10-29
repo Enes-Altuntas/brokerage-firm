@@ -78,4 +78,22 @@ public class OrderDocument {
     this.createdBy = order.getCreatedBy();
     this.updatedBy = order.getUpdatedBy();
   }
+
+  public Order toDomain() {
+    return Order.builder()
+        .id(id)
+        .customerId(customerId)
+        .assetId(assetId)
+        .assetName(assetName)
+        .side(side)
+        .size(size)
+        .price(price)
+        .status(status)
+        .createdAt(createdAt)
+        .updatedAt(updatedAt)
+        .deletedAt(deletedAt)
+        .createdBy(createdBy)
+        .updatedBy(updatedBy)
+        .build();
+  }
 }

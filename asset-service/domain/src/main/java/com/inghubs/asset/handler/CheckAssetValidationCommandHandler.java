@@ -1,7 +1,7 @@
 package com.inghubs.asset.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.inghubs.asset.command.CheckAssetValidationCommand;
+import com.inghubs.asset.command.CheckValidationAndUpdateAssetCommand;
 import com.inghubs.asset.factory.abstracts.AssetUpdateStrategyFactory;
 import com.inghubs.asset.port.AssetPort;
 import com.inghubs.common.command.ObservableCommandPublisher;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CheckAssetValidationCommandHandler extends ObservableCommandPublisher
-    implements VoidCommandHandler<CheckAssetValidationCommand> {
+    implements VoidCommandHandler<CheckValidationAndUpdateAssetCommand> {
 
   private final InboxPort inboxPort;
   private final ObjectMapper objectMapper;
@@ -25,11 +25,11 @@ public class CheckAssetValidationCommandHandler extends ObservableCommandPublish
     this.objectMapper = objectMapper;
     this.assetUpdateStrategyFactory = assetUpdateStrategyFactory;
     this.assetPort = assetPort;
-    register(CheckAssetValidationCommand.class, this);
+    register(CheckValidationAndUpdateAssetCommand.class, this);
   }
 
   @Override
-  public void handle(CheckAssetValidationCommand command) {
+  public void handle(CheckValidationAndUpdateAssetCommand command) {
     Inbox currentInbox = inboxPort.retrieveInboxById(command.getOutboxId());
     if (currentInbox != null) {
       return;

@@ -1,9 +1,9 @@
 package com.inghubs.asset.factory.abstracts;
 
-import com.inghubs.asset.command.CheckAssetValidationCommand;
+import com.inghubs.asset.command.CheckValidationAndUpdateAssetCommand;
 
 public interface AssetUpdateStrategyFactory {
 
-  void checkValidationAndUpdateAsset(CheckAssetValidationCommand command);
+  void checkValidationAndUpdateAsset(CheckValidationAndUpdateAssetCommand command);
 
 }

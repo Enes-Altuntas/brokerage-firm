@@ -57,7 +57,6 @@ public class OrderValidationEventConsumer extends BeanAwareCommandPublisher {
       acknowledgment.acknowledge();
 
     } catch (Exception e) {
-      //TODO ASSET ROLLBACK
       throw new RuntimeException("Error processing Debezium message", e);
     }
   }

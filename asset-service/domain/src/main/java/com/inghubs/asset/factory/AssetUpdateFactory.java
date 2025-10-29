@@ -1,6 +1,6 @@
 package com.inghubs.asset.factory;
 
-import com.inghubs.asset.command.CheckAssetValidationCommand;
+import com.inghubs.asset.command.CheckValidationAndUpdateAssetCommand;
 import com.inghubs.asset.factory.abstracts.AssetUpdateStrategyFactory;
 import com.inghubs.asset.strategies.abstracts.AssetUpdateStrategy;
 import java.util.Map;
@@ -14,7 +14,7 @@ public class AssetUpdateFactory implements AssetUpdateStrategyFactory {
   private final Map<String, AssetUpdateStrategy> assetValidations;
 
   @Override
-  public void checkValidationAndUpdateAsset(CheckAssetValidationCommand command) {
+  public void checkValidationAndUpdateAsset(CheckValidationAndUpdateAssetCommand command) {
 
     AssetUpdateStrategy assetupdateStrategy = assetValidations.get(
         command.getOrder().getSide().name().toUpperCase() + AssetUpdateStrategy.suffix);

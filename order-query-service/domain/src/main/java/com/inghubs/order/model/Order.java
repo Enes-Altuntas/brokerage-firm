@@ -44,4 +44,9 @@ public class Order {
 
   private String updatedBy;
 
+  public void  updateStatus(OrderStatus orderStatus) {
+    this.status = orderStatus;
+    this.updatedAt = Instant.now();
+    this.updatedBy = "SYSTEM";
+  }
 }

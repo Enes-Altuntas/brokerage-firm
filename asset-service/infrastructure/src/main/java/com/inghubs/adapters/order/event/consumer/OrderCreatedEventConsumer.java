@@ -3,7 +3,7 @@ package com.inghubs.adapters.order.event.consumer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inghubs.adapters.order.event.consumer.model.OutboxEvent;
-import com.inghubs.asset.command.CheckAssetValidationCommand;
+import com.inghubs.asset.command.CheckValidationAndUpdateAssetCommand;
 import com.inghubs.common.command.BeanAwareCommandPublisher;
 import com.inghubs.order.model.Order;
 import java.util.Map;
@@ -47,7 +47,7 @@ public class OrderCreatedEventConsumer extends BeanAwareCommandPublisher {
       }
 
       Order order = objectMapper.readValue(outboxEvent.getPayload().asText(), Order.class);
-      CheckAssetValidationCommand command = CheckAssetValidationCommand.builder()
+      CheckValidationAndUpdateAssetCommand command = CheckValidationAndUpdateAssetCommand.builder()
           .outboxId(outboxEvent.getId())
           .order(order)
           .build();
@@ -63,7 +63,6 @@ public class OrderCreatedEventConsumer extends BeanAwareCommandPublisher {
   @KafkaListener(topics = "order.public.outbox-dlt", groupId = "asset-group", containerFactory = "kafkaListenerContainerFactory")
   public void consumeCreateOrderOutboxEventDLT(@Headers Map<String, Object> headers, String eventPayload,
       Acknowledgment acknowledgment) {
-    //TODO ORDER REJECT EVENT
     acknowledgment.acknowledge();
   }
 }

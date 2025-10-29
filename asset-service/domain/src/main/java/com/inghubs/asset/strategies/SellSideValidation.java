@@ -1,6 +1,6 @@
 package com.inghubs.asset.strategies;
 
-import com.inghubs.asset.command.CheckAssetValidationCommand;
+import com.inghubs.asset.command.CheckValidationAndUpdateAssetCommand;
 import com.inghubs.asset.model.Asset;
 import com.inghubs.asset.port.AssetPort;
 import com.inghubs.asset.strategies.abstracts.AssetUpdateStrategy;
@@ -22,7 +22,7 @@ public class SellSideValidation implements AssetUpdateStrategy {
   private final TransactionTemplate transactionTemplate;
 
   @Override
-  public void checkValidationAndUpdateAsset(CheckAssetValidationCommand command) {
+  public void checkValidationAndUpdateAsset(CheckValidationAndUpdateAssetCommand command) {
     Order order = command.getOrder();
 
     Asset asset = assetPort.retrieveCustomerAsset(order.getAssetId(), order.getCustomerId());
