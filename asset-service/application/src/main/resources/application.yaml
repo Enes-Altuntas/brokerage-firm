@@ -1,0 +1,24 @@
+server:
+  port: 9042
+
+spring:
+  application:
+    name: asset-service
+  datasource:
+    url: jdbc:postgresql://localhost:5433/asset
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  kafka:
+    bootstrap-servers: localhost:29092
+  flyway:
+    locations: classpath:db/migration
+    enabled: false
+    baseline-on-migrate: false
