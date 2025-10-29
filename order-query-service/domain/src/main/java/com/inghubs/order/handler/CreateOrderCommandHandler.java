@@ -8,7 +8,6 @@ import com.inghubs.inbox.port.InboxPort;
 import com.inghubs.order.command.CreateOrderCommand;
 import com.inghubs.order.model.Order;
 import com.inghubs.order.port.OrderPort;
-import java.time.Instant;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -43,22 +42,6 @@ public class CreateOrderCommandHandler extends ObservableCommandPublisher
 
     orderPort.createOrder(order);
 
-    Inbox inbox = prepareInboxForOrderCreatedEvent(command);
-    inboxPort.createInbox(inbox);
-  }
-
-  private Inbox prepareInboxForOrderCreatedEvent(CreateOrderCommand command) {
-
-    return Inbox.builder()
-        .id(command.getId())
-        .aggregateId(command.getAggregateId())
-        .payload(command.getPayload())
-        .eventType(command.getEventType())
-        .aggregateType(command.getAggregateType())
-        .createdAt(Instant.now())
-        .updatedAt(Instant.now())
-        .createdBy("SYSTEM")
-        .updatedBy("SYSTEM")
-        .build();
+    inboxPort.createInboxForOrderCreatedEventEntity(command.getId(), order);
   }
 }

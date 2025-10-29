@@ -2,6 +2,7 @@ package com.inghubs.adapters.outbox.jpa.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.inghubs.common.jpa.entity.BaseEntity;
+import com.inghubs.outbox.model.Outbox;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,5 +43,20 @@ public class OutboxEntity extends BaseEntity {
   @JdbcTypeCode(SqlTypes.JSON)
   @Column(columnDefinition = "jsonb", updatable = false)
   private JsonNode payload;
+
+  public static OutboxEntity toEntity(Outbox outbox) {
+    return OutboxEntity.builder()
+        .id(outbox.getId())
+        .aggregateId(outbox.getAggregateId())
+        .aggregateType(outbox.getAggregateType())
+        .eventType(outbox.getEventType())
+        .payload(outbox.getPayload())
+        .createdAt(outbox.getCreatedAt())
+        .updatedAt(outbox.getUpdatedAt())
+        .deletedAt(outbox.getDeletedAt())
+        .createdBy(outbox.getCreatedBy())
+        .updatedBy(outbox.getUpdatedBy())
+        .build();
+  }
 
 }

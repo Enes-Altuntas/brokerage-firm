@@ -1,5 +1,6 @@
 package com.inghubs.adapters.asset.jpa.entity;
 
+import com.inghubs.asset.model.Asset;
 import com.inghubs.common.jpa.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,5 +35,33 @@ public class AssetEntity extends BaseEntity {
   private BigDecimal size;
 
   private BigDecimal usableSize;
+
+  public AssetEntity(Asset asset) {
+    this.id = asset.getId();
+    this.customerId = asset.getCustomerId();
+    this.assetName = asset.getAssetName();
+    this.size = asset.getSize();
+    this.usableSize = asset.getUsableSize();
+    setCreatedBy(asset.getCreatedBy());
+    setUpdatedBy(asset.getUpdatedBy());
+    setCreatedAt(asset.getCreatedAt());
+    setUpdatedAt(asset.getUpdatedAt());
+    setDeletedAt(asset.getDeletedAt());
+  }
+
+  public Asset toDomain() {
+    return Asset.builder()
+        .id(id)
+        .customerId(customerId)
+        .assetName(assetName)
+        .size(size)
+        .usableSize(usableSize)
+        .createdBy(getCreatedBy())
+        .updatedBy(getUpdatedBy())
+        .createdAt(getCreatedAt())
+        .updatedAt(getUpdatedAt())
+        .deletedAt(getDeletedAt())
+        .build();
+  }
 
 }
