@@ -2,10 +2,9 @@ package com.inghubs.adapters.inbox.jpa.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.inghubs.common.jpa.entity.BaseEntity;
+import com.inghubs.inbox.model.Inbox;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.Instant;
@@ -28,7 +27,6 @@ import org.hibernate.type.SqlTypes;
 public class InboxEntity extends BaseEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
   @Column(name = "aggregate_id", nullable = false)
@@ -53,4 +51,37 @@ public class InboxEntity extends BaseEntity {
   @Column(name = "request_id")
   private String requestId;
 
+  public InboxEntity(Inbox inbox) {
+    this.id = inbox.getId();
+    this.aggregateId = inbox.getAggregateId();
+    this.aggregateType = inbox.getAggregateType();
+    this.eventType = inbox.getEventType();
+    this.payload = inbox.getPayload();
+    this.processedAt = inbox.getProcessedAt();
+    this.isProcessed = inbox.getIsProcessed();
+    this.requestId = inbox.getRequestId();
+    this.setCreatedAt(inbox.getCreatedAt());
+    this.setUpdatedAt(inbox.getUpdatedAt());
+    this.setDeletedAt(inbox.getDeletedAt());
+    this.setCreatedBy(inbox.getCreatedBy());
+    this.setUpdatedBy(inbox.getUpdatedBy());
+  }
+
+  public Inbox toDomain() {
+    return Inbox.builder()
+        .id(id)
+        .aggregateId(aggregateId)
+        .aggregateType(aggregateType)
+        .eventType(eventType)
+        .payload(payload)
+        .processedAt(processedAt)
+        .isProcessed(isProcessed)
+        .requestId(requestId)
+        .createdAt(getCreatedAt())
+        .updatedAt(getUpdatedAt())
+        .deletedAt(getDeletedAt())
+        .createdBy(getCreatedBy())
+        .updatedBy(getUpdatedBy())
+        .build();
+  }
 }

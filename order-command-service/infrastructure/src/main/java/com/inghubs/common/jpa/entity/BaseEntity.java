@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
@@ -26,14 +26,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, allowGetters = true)
 public class BaseEntity {
 
-  @CreatedDate
+  @CreationTimestamp
   @Column(updatable = false)
   @JsonSerialize(using = InstantSerializer.class)
-  private Instant createdAt;
+  private Instant createdAt = Instant.now();
 
-  @LastModifiedDate
+  @UpdateTimestamp
   @JsonSerialize(using = InstantSerializer.class)
-  private Instant updatedAt;
+  private Instant updatedAt = Instant.now();
 
   @JsonSerialize(using = InstantSerializer.class)
   private Instant deletedAt;

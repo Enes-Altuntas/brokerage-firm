@@ -42,24 +42,13 @@
       <groupId>org.springframework.boot</groupId>
     </dependency>
     <dependency>
-      <artifactId>flyway-core</artifactId>
-      <groupId>org.flywaydb</groupId>
-      <version>11.10.0</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
     </dependency>
     <dependency>
       <artifactId>postgresql</artifactId>
       <groupId>org.postgresql</groupId>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <artifactId>flyway-database-postgresql</artifactId>
-      <groupId>org.flywaydb</groupId>
-      <scope>runtime</scope>
-      <version>11.10.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
     </dependency>
 
     <dependency>
