@@ -31,8 +31,6 @@ public class OrderValidationEventConsumer extends BeanAwareCommandPublisher {
   )
   @KafkaListener(topics = "asset.public.outbox", groupId = "order-command-group", containerFactory = "kafkaListenerContainerFactory")
   public void consumeOrderValidationEvent(@Headers Map<String, Object> headers, String event, Acknowledgment acknowledgment) {
-    log.info("Received order event {}", event);
-
     try {
       JsonNode rootNode = objectMapper.readTree(event);
 
@@ -59,7 +57,7 @@ public class OrderValidationEventConsumer extends BeanAwareCommandPublisher {
       acknowledgment.acknowledge();
 
     } catch (Exception e) {
-      log.error("Error processing Debezium message, will retry: {}", e.getMessage());
+      //TODO ASSET ROLLBACK
       throw new RuntimeException("Error processing Debezium message", e);
     }
   }
@@ -67,7 +65,6 @@ public class OrderValidationEventConsumer extends BeanAwareCommandPublisher {
   @KafkaListener(topics = "order.public.outbox-dlt", groupId = "order-command-group", containerFactory = "kafkaListenerContainerFactory")
   public void consumeCreateOrderOutboxEventDLT(@Headers Map<String, Object> headers, String eventPayload,
       Acknowledgment acknowledgment) {
-    log.info("Received order event DLT {}", eventPayload);
     acknowledgment.acknowledge();
   }
 }
