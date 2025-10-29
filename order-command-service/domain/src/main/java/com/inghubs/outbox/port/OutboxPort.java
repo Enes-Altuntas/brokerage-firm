@@ -6,4 +6,6 @@ public interface OutboxPort {
 
   void createOrderCreatedOutboxEntity(Order order);
 
+  void createOrderUpdatedOutboxEntity(Order order);
+
 }

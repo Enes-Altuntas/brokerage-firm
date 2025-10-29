@@ -1,14 +1,14 @@
 package com.inghubs.outbox.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.inghubs.common.model.BaseDomain;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 @Getter
 @SuperBuilder
-public class Outbox extends BaseDomain {
+public class Outbox {
 
   private UUID id;
 
@@ -19,5 +19,15 @@ public class Outbox extends BaseDomain {
   private String eventType;
 
   private JsonNode payload;
+
+  private Instant createdAt;
+
+  private Instant updatedAt;
+
+  private Instant deletedAt;
+
+  private String createdBy;
+
+  private String updatedBy;
 
 }

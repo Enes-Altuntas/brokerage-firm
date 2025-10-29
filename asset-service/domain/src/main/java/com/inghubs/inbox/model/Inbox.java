@@ -1,7 +1,6 @@
 package com.inghubs.inbox.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.inghubs.common.model.BaseDomain;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
@@ -9,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @SuperBuilder
-public class Inbox extends BaseDomain {
+public class Inbox {
 
   private UUID id;
 
@@ -21,10 +20,14 @@ public class Inbox extends BaseDomain {
 
   private JsonNode payload;
 
-  private Instant processedAt;
+  private Instant createdAt;
 
-  private Boolean isProcessed;
+  private Instant updatedAt;
 
-  private String requestId;
+  private Instant deletedAt;
+
+  private String createdBy;
+
+  private String updatedBy;
 
 }

@@ -8,9 +8,11 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class CreateOrderCommand implements Command {
+public class UpdateOrderCommand implements Command {
 
   private UUID outboxId;
+
+  private String eventType;
 
   private Order order;
 

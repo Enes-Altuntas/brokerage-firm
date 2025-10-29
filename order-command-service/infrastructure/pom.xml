@@ -58,5 +58,11 @@
       <scope>runtime</scope>
       <version>11.10.0</version>
     </dependency>
+
+    <dependency>
+      <artifactId>spring-kafka</artifactId>
+      <groupId>org.springframework.kafka</groupId>
+      <version>3.3.6</version>
+    </dependency>
   </dependencies>
 </project>

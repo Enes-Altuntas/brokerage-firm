@@ -2,7 +2,6 @@ package com.inghubs.adapters.order.event.consumer.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.inghubs.order.command.CreateOrderCommand;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -46,20 +45,5 @@ public class OutboxEvent {
 
   @JsonProperty("deleted_at")
   private Instant deletedAt;
-
-  public CreateOrderCommand toCommand() {
-    return CreateOrderCommand.builder()
-        .id(id)
-        .aggregateId(aggregateId)
-        .aggregateType(aggregateType)
-        .eventType(eventType)
-        .payload(payload)
-        .createdBy(createdBy)
-        .updatedBy(updatedBy)
-        .createdAt(createdAt)
-        .updatedAt(updatedAt)
-        .deletedAt(deletedAt)
-        .build();
-  }
 
 }

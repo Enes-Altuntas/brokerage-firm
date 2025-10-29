@@ -3,8 +3,9 @@ package com.inghubs.adapters.order.event.consumer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inghubs.adapters.order.event.consumer.model.OutboxEvent;
-import com.inghubs.asset.command.CheckAssetValidationCommand;
 import com.inghubs.common.command.BeanAwareCommandPublisher;
+import com.inghubs.order.command.UpdateOrderCommand;
+import com.inghubs.order.model.Order;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CreateOrderOutboxEventConsumer extends BeanAwareCommandPublisher {
+public class OrderValidationEventConsumer extends BeanAwareCommandPublisher {
 
   public static final String OPERATION = "op";
   public static final String CREATE = "c";
@@ -28,8 +29,8 @@ public class CreateOrderOutboxEventConsumer extends BeanAwareCommandPublisher {
   @RetryableTopic(
       backoff = @Backoff(delay = 2000, multiplier = 3, maxDelay = 20000)
   )
-  @KafkaListener(topics = "order.public.outbox", groupId = "asset-group", containerFactory = "kafkaListenerContainerFactory")
-  public void consumeCreateOrderOutboxEvent(@Headers Map<String, Object> headers, String event, Acknowledgment acknowledgment) {
+  @KafkaListener(topics = "asset.public.outbox", groupId = "order-command-group", containerFactory = "kafkaListenerContainerFactory")
+  public void consumeOrderValidationEvent(@Headers Map<String, Object> headers, String event, Acknowledgment acknowledgment) {
     log.info("Received order event {}", event);
 
     try {
@@ -42,13 +43,20 @@ public class CreateOrderOutboxEventConsumer extends BeanAwareCommandPublisher {
 
       OutboxEvent outboxEvent = objectMapper.treeToValue(rootNode.get(AFTER), OutboxEvent.class);
 
-      if(!outboxEvent.getEventType().equals("ORDER_CREATED")) {
+      if(!outboxEvent.getEventType().equals("ORDER_REJECTED") && !outboxEvent.getEventType().equals("ORDER_VALIDATED") ) {
         acknowledgment.acknowledge();
         return;
       }
 
-      CheckAssetValidationCommand command = outboxEvent.toCommand();
+      Order order = objectMapper.readValue(outboxEvent.getPayload().asText(), Order.class);
+      UpdateOrderCommand command = UpdateOrderCommand.builder()
+          .outboxId(outboxEvent.getId())
+          .eventType(outboxEvent.getEventType())
+          .order(order)
+          .build();
+
       publish(command);
+      acknowledgment.acknowledge();
 
     } catch (Exception e) {
       log.error("Error processing Debezium message, will retry: {}", e.getMessage());
@@ -56,7 +64,7 @@ public class CreateOrderOutboxEventConsumer extends BeanAwareCommandPublisher {
     }
   }
 
-  @KafkaListener(topics = "order.public.outbox-dlt", groupId = "asset-group", containerFactory = "kafkaListenerContainerFactory")
+  @KafkaListener(topics = "order.public.outbox-dlt", groupId = "order-command-group", containerFactory = "kafkaListenerContainerFactory")
   public void consumeCreateOrderOutboxEventDLT(@Headers Map<String, Object> headers, String eventPayload,
       Acknowledgment acknowledgment) {
     log.info("Received order event DLT {}", eventPayload);

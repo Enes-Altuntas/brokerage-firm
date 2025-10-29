@@ -8,7 +8,6 @@ import com.inghubs.common.command.ObservableCommandPublisher;
 import com.inghubs.common.command.VoidCommandHandler;
 import com.inghubs.inbox.model.Inbox;
 import com.inghubs.inbox.port.InboxPort;
-import com.inghubs.order.model.Order;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,23 +30,11 @@ public class CheckAssetValidationCommandHandler extends ObservableCommandPublish
 
   @Override
   public void handle(CheckAssetValidationCommand command) {
-    Order order = parsePayload(command);
-
     Inbox currentInbox = inboxPort.retrieveInboxById(command.getOutboxId());
     if (currentInbox != null) {
       return;
     }
 
-    assetUpdateStrategyFactory.checkValidationAndUpdateAsset(command.getOutboxId(), order);
-  }
-
-  private Order parsePayload(CheckAssetValidationCommand command) {
-    Order order;
-    try {
-      order = objectMapper.readValue(command.getPayload().asText(), Order.class);
-    } catch (Exception e) {
-      throw new RuntimeException();
-    }
-    return order;
+    assetUpdateStrategyFactory.checkValidationAndUpdateAsset(command);
   }
 }

@@ -34,4 +34,22 @@ public class OutboxDataAdapter implements OutboxPort {
 
     outboxRepository.save(entity);
   }
+
+  @Override
+  public void createOrderUpdatedOutboxEntity(Order order) {
+    JsonNode payload = objectMapper.valueToTree(order);
+
+    OutboxEntity entity = OutboxEntity.builder()
+        .payload(payload)
+        .aggregateId(order.getId())
+        .aggregateType("ORDER")
+        .eventType("ORDER_UPDATED")
+        .createdAt(Instant.now())
+        .updatedAt(Instant.now())
+        .createdBy("SYSTEM")
+        .updatedBy("SYSTEM")
+        .build();
+
+    outboxRepository.save(entity);
+  }
 }

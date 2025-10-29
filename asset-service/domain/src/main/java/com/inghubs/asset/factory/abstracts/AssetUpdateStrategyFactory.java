@@ -1,10 +1,9 @@
 package com.inghubs.asset.factory.abstracts;
 
-import com.inghubs.order.model.Order;
-import java.util.UUID;
+import com.inghubs.asset.command.CheckAssetValidationCommand;
 
 public interface AssetUpdateStrategyFactory {
 
-  void checkValidationAndUpdateAsset(UUID outboxId, Order order);
+  void checkValidationAndUpdateAsset(CheckAssetValidationCommand command);
 
 }

@@ -6,7 +6,6 @@ import com.inghubs.common.command.VoidCommandHandler;
 import com.inghubs.inbox.model.Inbox;
 import com.inghubs.inbox.port.InboxPort;
 import com.inghubs.order.command.CreateOrderCommand;
-import com.inghubs.order.model.Order;
 import com.inghubs.order.port.OrderPort;
 import org.springframework.stereotype.Service;
 
@@ -28,20 +27,12 @@ public class CreateOrderCommandHandler extends ObservableCommandPublisher
 
   @Override
   public void handle(CreateOrderCommand command) {
-    Inbox currentInbox = inboxPort.retrieveInboxById(command.getId());
+    Inbox currentInbox = inboxPort.retrieveInboxById(command.getOutboxId());
     if (currentInbox != null) {
       return;
     }
 
-    Order order;
-    try {
-      order = objectMapper.readValue(command.getPayload().asText(), Order.class);
-    } catch (Exception e) {
-      throw new RuntimeException();
-    }
-
-    orderPort.createOrder(order);
-
-    inboxPort.createInboxForOrderCreatedEventEntity(command.getId(), order);
+    orderPort.createOrder(command.getOrder());
+    inboxPort.createInboxForOrderCreatedEventEntity(command);
   }
 }

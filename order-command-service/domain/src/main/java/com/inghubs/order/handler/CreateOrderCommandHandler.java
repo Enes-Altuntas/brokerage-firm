@@ -32,7 +32,7 @@ public class CreateOrderCommandHandler extends ObservableCommandPublisher
 
     Order initializedOrder = Order.initializeOrder(command);
 
-    Order order = orderPort.createOrder(initializedOrder);
+    Order order = orderPort.createOrUpdateOrder(initializedOrder);
 
     outboxPort.createOrderCreatedOutboxEntity(order);
 
