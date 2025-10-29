@@ -32,15 +32,6 @@ public class OutboxEvent {
   @JsonProperty("payload")
   private JsonNode payload;
 
-  @JsonProperty("processed_at")
-  private Instant processedAt;
-
-  @JsonProperty("processed")
-  private Boolean isProcessed;
-
-  @JsonProperty("request_id")
-  private String requestId;
-
   @JsonProperty("created_by")
   private String createdBy;
 
@@ -63,9 +54,6 @@ public class OutboxEvent {
         .aggregateType(aggregateType)
         .eventType(eventType)
         .payload(payload)
-        .processedAt(processedAt)
-        .isProcessed(isProcessed)
-        .requestId(requestId)
         .createdBy(createdBy)
         .updatedBy(updatedBy)
         .createdAt(createdAt)

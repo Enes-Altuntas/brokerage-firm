@@ -7,7 +7,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -42,15 +41,6 @@ public class InboxEntity extends BaseEntity {
   @Column(columnDefinition = "jsonb", updatable = false)
   private JsonNode payload;
 
-  @Column(name = "processed_at")
-  private Instant processedAt;
-
-  @Column(name = "processed", nullable = false)
-  private Boolean isProcessed;
-
-  @Column(name = "request_id")
-  private String requestId;
-
   public Inbox toDomain() {
     return Inbox.builder()
         .id(id)
@@ -58,9 +48,6 @@ public class InboxEntity extends BaseEntity {
         .aggregateType(aggregateType)
         .eventType(eventType)
         .payload(payload)
-        .processedAt(processedAt)
-        .isProcessed(isProcessed)
-        .requestId(requestId)
         .createdAt(getCreatedAt())
         .updatedAt(getUpdatedAt())
         .deletedAt(getDeletedAt())

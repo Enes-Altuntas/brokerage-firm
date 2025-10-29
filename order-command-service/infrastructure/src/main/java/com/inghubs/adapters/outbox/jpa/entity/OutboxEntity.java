@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,14 +42,5 @@ public class OutboxEntity extends BaseEntity {
   @JdbcTypeCode(SqlTypes.JSON)
   @Column(columnDefinition = "jsonb", updatable = false)
   private JsonNode payload;
-
-  @Column(name = "processed_at")
-  private Instant processedAt;
-
-  @Column(name = "processed", nullable = false)
-  private Boolean isProcessed;
-
-  @Column(name = "request_id")
-  private String requestId;
 
 }

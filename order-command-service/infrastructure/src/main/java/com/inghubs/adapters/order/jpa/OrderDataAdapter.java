@@ -45,7 +45,6 @@ public class OrderDataAdapter implements OrderPort {
         .aggregateId(savedEntity.getId())
         .aggregateType("ORDER")
         .eventType("ORDER_CREATED")
-        .isProcessed(false)
         .createdAt(Instant.now())
         .updatedAt(Instant.now())
         .createdBy("SYSTEM")

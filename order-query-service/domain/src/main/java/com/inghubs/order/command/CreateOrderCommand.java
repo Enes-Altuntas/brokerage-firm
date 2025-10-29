@@ -21,12 +21,6 @@ public class CreateOrderCommand implements Command {
 
   private JsonNode payload;
 
-  private Instant processedAt;
-
-  private Boolean isProcessed;
-
-  private String requestId;
-
   private String createdBy;
 
   private String updatedBy;
