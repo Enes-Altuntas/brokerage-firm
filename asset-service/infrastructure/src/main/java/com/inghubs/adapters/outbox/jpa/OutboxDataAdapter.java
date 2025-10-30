@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inghubs.adapters.outbox.jpa.entity.OutboxEntity;
 import com.inghubs.adapters.outbox.jpa.repository.OutboxRepository;
 import com.inghubs.order.model.Order;
-import com.inghubs.outbox.model.Outbox;
 import com.inghubs.outbox.port.OutboxPort;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
@@ -15,40 +14,24 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OutboxDataAdapter implements OutboxPort {
 
+  public static final String ORDER = "ORDER";
+  public static final String SYSTEM = "SYSTEM";
   private final OutboxRepository outboxRepository;
   private final ObjectMapper objectMapper;
 
   @Override
-  public void createOrderRejectedOutboxEntity(Order order) {
+  public void createOrderOutboxEntity(String eventType, Order order) {
     JsonNode payload = objectMapper.valueToTree(order);
 
     OutboxEntity entity = OutboxEntity.builder()
         .aggregateId(order.getId())
         .payload(payload)
-        .eventType("ORDER_REJECTED")
-        .aggregateType("ORDER")
+        .eventType(eventType)
+        .aggregateType(ORDER)
         .createdAt(Instant.now())
         .updatedAt(Instant.now())
-        .createdBy("SYSTEM")
-        .updatedBy("SYSTEM")
-        .build();
-
-    outboxRepository.save(entity);
-  }
-
-  @Override
-  public void createOrderValidatedOutboxEntity(Order order) {
-    JsonNode payload = objectMapper.valueToTree(order);
-
-    OutboxEntity entity = OutboxEntity.builder()
-        .aggregateId(order.getId())
-        .payload(payload)
-        .eventType("ORDER_VALIDATED")
-        .aggregateType("ORDER")
-        .createdAt(Instant.now())
-        .updatedAt(Instant.now())
-        .createdBy("SYSTEM")
-        .updatedBy("SYSTEM")
+        .createdBy(SYSTEM)
+        .updatedBy(SYSTEM)
         .build();
 
     outboxRepository.save(entity);

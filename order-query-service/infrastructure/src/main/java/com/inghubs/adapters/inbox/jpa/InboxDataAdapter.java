@@ -6,7 +6,6 @@ import com.inghubs.adapters.inbox.jpa.entity.InboxEntity;
 import com.inghubs.adapters.inbox.jpa.repository.InboxRepository;
 import com.inghubs.inbox.model.Inbox;
 import com.inghubs.inbox.port.InboxPort;
-import com.inghubs.order.command.CancelOrderCommand;
 import com.inghubs.order.command.CreateOrderCommand;
 import com.inghubs.order.command.UpdateOrderCommand;
 import java.time.Instant;
@@ -19,6 +18,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class InboxDataAdapter implements InboxPort {
 
+  public static final String ORDER_CANCELED = "ORDER_CANCELED";
+  public static final String ORDER = "ORDER";
+  public static final String SYSTEM = "SYSTEM";
+  public static final String ORDER_UPDATED = "ORDER_UPDATED";
+  public static final String ORDER_CREATED = "ORDER_CREATED";
   private final InboxRepository inboxRepository;
   private final ObjectMapper objectMapper;
 
@@ -42,50 +46,31 @@ public class InboxDataAdapter implements InboxPort {
         .id(command.getOutboxId())
         .aggregateId(command.getOrder().getId())
         .payload(payload)
-        .eventType("ORDER_CREATED")
-        .aggregateType("ORDER")
+        .eventType(ORDER_CREATED)
+        .aggregateType(ORDER)
         .createdAt(Instant.now())
         .updatedAt(Instant.now())
-        .createdBy("SYSTEM")
-        .updatedBy("SYSTEM")
+        .createdBy(SYSTEM)
+        .updatedBy(SYSTEM)
         .build();
 
     inboxRepository.save(entity);
   }
 
   @Override
-  public void createOrderUpdatedInboxEntity(UpdateOrderCommand command) {
+  public void createInboxEntity(UpdateOrderCommand command) {
     JsonNode payload = objectMapper.valueToTree(command.getOrder());
 
     InboxEntity entity = InboxEntity.builder()
         .id(command.getOutboxId())
         .aggregateId(command.getOrder().getId())
         .payload(payload)
-        .eventType("ORDER_UPDATED")
-        .aggregateType("ORDER")
+        .eventType(command.getEventType())
+        .aggregateType(ORDER)
         .createdAt(Instant.now())
         .updatedAt(Instant.now())
-        .createdBy("SYSTEM")
-        .updatedBy("SYSTEM")
-        .build();
-
-    inboxRepository.save(entity);
-  }
-
-  @Override
-  public void createOrderCanceledInboxEntity(CancelOrderCommand command) {
-    JsonNode payload = objectMapper.valueToTree(command.getOrder());
-
-    InboxEntity entity = InboxEntity.builder()
-        .id(command.getOutboxId())
-        .aggregateId(command.getOrder().getId())
-        .payload(payload)
-        .eventType("ORDER_CANCELED")
-        .aggregateType("ORDER")
-        .createdAt(Instant.now())
-        .updatedAt(Instant.now())
-        .createdBy("SYSTEM")
-        .updatedBy("SYSTEM")
+        .createdBy(SYSTEM)
+        .updatedBy(SYSTEM)
         .build();
 
     inboxRepository.save(entity);

@@ -6,7 +6,7 @@ import com.inghubs.adapters.inbox.jpa.entity.InboxEntity;
 import com.inghubs.adapters.inbox.jpa.repository.InboxRepository;
 import com.inghubs.inbox.model.Inbox;
 import com.inghubs.inbox.port.InboxPort;
-import com.inghubs.order.model.Order;
+import com.inghubs.order.command.UpdateOrderCommand;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class InboxDataAdapter implements InboxPort {
 
+  public static final String ORDER = "ORDER";
+  public static final String SYSTEM = "SYSTEM";
   private final InboxRepository inboxRepository;
   private final ObjectMapper objectMapper;
 
@@ -33,38 +35,19 @@ public class InboxDataAdapter implements InboxPort {
   }
 
   @Override
-  public void createOrderValidatedInboxEntity(UUID outboxId, Order order) {
-    JsonNode payload = objectMapper.valueToTree(order);
+  public void createInboxEntity(UpdateOrderCommand command) {
+    JsonNode payload = objectMapper.valueToTree(command.getOrder());
 
     InboxEntity entity = InboxEntity.builder()
-        .id(outboxId)
-        .aggregateId(order.getId())
+        .id(command.getOutboxId())
+        .aggregateId(command.getOrder().getId())
         .payload(payload)
-        .eventType("ORDER_VALIDATED")
-        .aggregateType("ORDER")
+        .eventType(command.getEventType())
+        .aggregateType(ORDER)
         .createdAt(Instant.now())
         .updatedAt(Instant.now())
-        .createdBy("SYSTEM")
-        .updatedBy("SYSTEM")
-        .build();
-
-    inboxRepository.save(entity);
-  }
-
-  @Override
-  public void createOrderRejectedInboxEntity(UUID outboxId, Order order) {
-    JsonNode payload = objectMapper.valueToTree(order);
-
-    InboxEntity entity = InboxEntity.builder()
-        .id(outboxId)
-        .aggregateId(order.getId())
-        .payload(payload)
-        .eventType("ORDER_REJECTED")
-        .aggregateType("ORDER")
-        .createdAt(Instant.now())
-        .updatedAt(Instant.now())
-        .createdBy("SYSTEM")
-        .updatedBy("SYSTEM")
+        .createdBy(SYSTEM)
+        .updatedBy(SYSTEM)
         .build();
 
     inboxRepository.save(entity);

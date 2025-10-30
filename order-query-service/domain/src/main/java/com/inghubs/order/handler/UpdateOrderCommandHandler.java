@@ -33,6 +33,6 @@ public class UpdateOrderCommandHandler extends ObservableCommandPublisher
     order.updateStatus(command.getOrder().getStatus());
 
     orderPort.createOrUpdateOrder(command.getOrder());
-    inboxPort.createOrderUpdatedInboxEntity(command);
+    inboxPort.createInboxEntity(command);
   }
 }

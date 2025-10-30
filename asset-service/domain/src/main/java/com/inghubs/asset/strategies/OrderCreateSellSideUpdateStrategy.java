@@ -1,9 +1,9 @@
 package com.inghubs.asset.strategies;
 
-import com.inghubs.asset.command.CheckValidationAndUpdateAssetCommand;
+import com.inghubs.asset.command.UpdateAssetCommand;
 import com.inghubs.asset.model.Asset;
 import com.inghubs.asset.port.AssetPort;
-import com.inghubs.asset.strategies.abstracts.AssetUpdateStrategy;
+import com.inghubs.asset.strategies.abstracts.OrderCreateAssetUpdateStrategy;
 import com.inghubs.inbox.port.InboxPort;
 import com.inghubs.order.model.Order;
 import com.inghubs.outbox.port.OutboxPort;
@@ -12,9 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @RequiredArgsConstructor
-@Service("SELL" + AssetUpdateStrategy.suffix)
-public class SellSideValidation implements AssetUpdateStrategy {
+@Service("SELL" + OrderCreateAssetUpdateStrategy.suffix)
+public class OrderCreateSellSideUpdateStrategy implements OrderCreateAssetUpdateStrategy {
 
+  public static final String ORDER_VALIDATED = "ORDER_VALIDATED";
+  public static final String ORDER_REJECTED = "ORDER_REJECTED";
   public static final String TRY = "TRY";
   private final AssetPort assetPort;
   private final InboxPort inboxPort;
@@ -22,7 +24,7 @@ public class SellSideValidation implements AssetUpdateStrategy {
   private final TransactionTemplate transactionTemplate;
 
   @Override
-  public void checkValidationAndUpdateAsset(CheckValidationAndUpdateAssetCommand command) {
+  public void updateAsset(UpdateAssetCommand command) {
     Order order = command.getOrder();
 
     Asset asset = assetPort.retrieveCustomerAsset(order.getAssetId(), order.getCustomerId());
@@ -36,12 +38,12 @@ public class SellSideValidation implements AssetUpdateStrategy {
       if(isValid) {
         asset.reserveForSellOrder(order);
         assetPort.updateOrSaveAsset(asset);
-        outboxPort.createOrderValidatedOutboxEntity(order);
+        outboxPort.createOrderOutboxEntity(ORDER_VALIDATED, order);
       } else {
-        outboxPort.createOrderRejectedOutboxEntity(order);
+        outboxPort.createOrderOutboxEntity(ORDER_REJECTED, order);
       }
 
-      inboxPort.createOrderCreatedInboxEntity(command.getOutboxId(), order);
+      inboxPort.createInboxEntity(command);
     });
   }
 }

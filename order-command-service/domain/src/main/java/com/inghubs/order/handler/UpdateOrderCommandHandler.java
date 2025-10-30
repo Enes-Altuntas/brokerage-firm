@@ -15,6 +15,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class UpdateOrderCommandHandler extends ObservableCommandPublisher
     implements VoidCommandHandler<UpdateOrderCommand> {
 
+  public static final String ORDER_UPDATED = "ORDER_UPDATED";
+  public static final String ORDER_VALIDATED = "ORDER_VALIDATED";
+  private static final String ORDER_CANCEL_CONFIRMED = "ORDER_CANCEL_CONFIRMED";
+  private static final String ORDER_CANCEL_REJECTED = "ORDER_CANCEL_REJECTED";
   private final OrderPort orderPort;
   private final OutboxPort outboxPort;
   private final InboxPort inboxPort;
@@ -39,16 +43,19 @@ public class UpdateOrderCommandHandler extends ObservableCommandPublisher
     Order order = orderPort.retrieveOrder(command.getOrder().getId());
 
     transactionTemplate.executeWithoutResult(status -> {
-      if(command.getEventType().equals("ORDER_VALIDATED")) {
+      if(command.getEventType().equals(ORDER_VALIDATED)) {
         order.reserve();
-        inboxPort.createOrderValidatedInboxEntity(command.getOutboxId(), order);
+      } else if (command.getEventType().equals(ORDER_CANCEL_CONFIRMED)) {
+        order.cancel();
+      } else if (command.getEventType().equals(ORDER_CANCEL_REJECTED)) {
+        order.reserve();
       } else {
         order.reject();
-        inboxPort.createOrderRejectedInboxEntity(command.getOutboxId(), order);
       }
 
       orderPort.createOrUpdateOrder(order);
-      outboxPort.createOrderUpdatedOutboxEntity(order);
+      inboxPort.createInboxEntity(command);
+      outboxPort.createOrderOutboxEntity(ORDER_UPDATED, order);
     });
   }
 }

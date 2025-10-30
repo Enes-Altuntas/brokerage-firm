@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CreateOrderCommandHandler extends ObservableCommandPublisher
     implements CommandHandler<Order,CreateOrderCommand> {
 
+  public static final String ORDER_CREATED = "ORDER_CREATED";
   private final OrderPort orderPort;
   private final OutboxPort outboxPort;
   private final ObjectMapper objectMapper;
@@ -34,7 +35,7 @@ public class CreateOrderCommandHandler extends ObservableCommandPublisher
 
     Order order = orderPort.createOrUpdateOrder(initializedOrder);
 
-    outboxPort.createOrderCreatedOutboxEntity(order);
+    outboxPort.createOrderOutboxEntity(ORDER_CREATED, order);
 
     return order;
   }

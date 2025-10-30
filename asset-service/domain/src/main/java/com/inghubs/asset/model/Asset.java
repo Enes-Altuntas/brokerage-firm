@@ -42,7 +42,16 @@ public class Asset {
     this.usableSize = this.usableSize.subtract(totalPrice);
   }
 
+  public void rollbackForBuyOrder(Order order) {
+    BigDecimal totalPrice = order.getSize().multiply(order.getPrice());
+    this.usableSize = this.usableSize.add(totalPrice);
+  }
+
   public void reserveForSellOrder(Order order) {
     this.usableSize = this.usableSize.subtract(order.getSize());
+  }
+
+  public void rollbackForSellOrder(Order order) {
+    this.usableSize = this.usableSize.add(order.getSize());
   }
 }

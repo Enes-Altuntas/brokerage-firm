@@ -14,40 +14,24 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OutboxDataAdapter implements OutboxPort {
 
+  public static final String ORDER = "ORDER";
+  public static final String SYSTEM = "SYSTEM";
   private final OutboxRepository outboxRepository;
   private final ObjectMapper objectMapper;
 
   @Override
-  public void createOrderCreatedOutboxEntity(Order order) {
+  public void createOrderOutboxEntity(String eventType, Order order) {
     JsonNode payload = objectMapper.valueToTree(order);
 
     OutboxEntity entity = OutboxEntity.builder()
         .payload(payload)
         .aggregateId(order.getId())
-        .aggregateType("ORDER")
-        .eventType("ORDER_CREATED")
+        .aggregateType(ORDER)
+        .eventType(eventType)
         .createdAt(Instant.now())
         .updatedAt(Instant.now())
-        .createdBy("SYSTEM")
-        .updatedBy("SYSTEM")
-        .build();
-
-    outboxRepository.save(entity);
-  }
-
-  @Override
-  public void createOrderUpdatedOutboxEntity(Order order) {
-    JsonNode payload = objectMapper.valueToTree(order);
-
-    OutboxEntity entity = OutboxEntity.builder()
-        .payload(payload)
-        .aggregateId(order.getId())
-        .aggregateType("ORDER")
-        .eventType("ORDER_UPDATED")
-        .createdAt(Instant.now())
-        .updatedAt(Instant.now())
-        .createdBy("SYSTEM")
-        .updatedBy("SYSTEM")
+        .createdBy(SYSTEM)
+        .updatedBy(SYSTEM)
         .build();
 
     outboxRepository.save(entity);

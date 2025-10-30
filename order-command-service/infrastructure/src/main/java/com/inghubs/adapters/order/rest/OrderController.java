@@ -4,7 +4,7 @@ import com.inghubs.adapters.order.rest.model.request.CreateOrderRequest;
 import com.inghubs.adapters.order.rest.model.response.CreateOrderResponse;
 import com.inghubs.common.rest.base.BaseController;
 import com.inghubs.common.rest.model.GenericResponse;
-import com.inghubs.order.command.CancelOrderCommand;
+import com.inghubs.order.command.CancelRequestOrderCommand;
 import com.inghubs.order.command.CreateOrderCommand;
 import com.inghubs.order.model.Order;
 import jakarta.validation.Valid;
@@ -44,11 +44,11 @@ public class OrderController extends BaseController {
 
   @PutMapping("/cancel/{orderId}")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<GenericResponse<Void>> cancelOrder(
+  public ResponseEntity<GenericResponse<Void>> requestCancelOrder(
       @RequestHeader(name = "x-customer-id")  UUID customerId,
       @PathVariable UUID orderId) {
 
-    CancelOrderCommand command = CancelOrderCommand.builder()
+    CancelRequestOrderCommand command = CancelRequestOrderCommand.builder()
         .orderId(orderId)
         .customerId(customerId)
         .build();

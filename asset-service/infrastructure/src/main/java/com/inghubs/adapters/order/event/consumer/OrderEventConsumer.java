@@ -3,13 +3,11 @@ package com.inghubs.adapters.order.event.consumer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inghubs.adapters.order.event.consumer.model.OutboxEvent;
+import com.inghubs.asset.command.UpdateAssetCommand;
 import com.inghubs.common.command.BeanAwareCommandPublisher;
-import com.inghubs.common.model.Command;
-import com.inghubs.order.command.CancelOrderCommand;
-import com.inghubs.order.command.CreateOrderCommand;
-import com.inghubs.order.command.UpdateOrderCommand;
 import com.inghubs.order.model.Order;
 import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -22,20 +20,21 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class OrderCreatedEventConsumer extends BeanAwareCommandPublisher {
+public class OrderEventConsumer extends BeanAwareCommandPublisher {
 
   public static final String OPERATION = "op";
   public static final String CREATE = "c";
   public static final String AFTER = "after";
-  public static final String ORDER_CREATED = "ORDER_CREATED";
-  public static final String ORDER_UPDATED = "ORDER_UPDATED";
-  public static final String ORDER_CANCELLED = "ORDER_CANCELLED";
+  private static final Set<String> EVENTS_TO_ALLOWED = Set.of(
+      "ORDER_CANCEL_REQUESTED",
+      "ORDER_CREATED"
+  );
   private final ObjectMapper objectMapper;
 
   @RetryableTopic(
       backoff = @Backoff(delay = 2000, multiplier = 3, maxDelay = 20000)
   )
-  @KafkaListener(topics = "order.public.outbox", groupId = "order-query-group", containerFactory = "kafkaListenerContainerFactory")
+  @KafkaListener(topics = "order.public.outbox", groupId = "asset-group", containerFactory = "kafkaListenerContainerFactory")
   public void consumeOrderCreatedEvent(@Headers Map<String, Object> headers, String event, Acknowledgment acknowledgment) {
     try {
       JsonNode rootNode = objectMapper.readTree(event);
@@ -47,15 +46,17 @@ public class OrderCreatedEventConsumer extends BeanAwareCommandPublisher {
 
       OutboxEvent outboxEvent = objectMapper.treeToValue(rootNode.get(AFTER), OutboxEvent.class);
 
-      if(!outboxEvent.getEventType().equals(ORDER_CREATED)
-          && !outboxEvent.getEventType().equals(ORDER_UPDATED)
-          && !outboxEvent.getEventType().equals(ORDER_CANCELLED)) {
+      if(!EVENTS_TO_ALLOWED.contains(outboxEvent.getEventType())) {
         acknowledgment.acknowledge();
         return;
       }
 
       Order order = objectMapper.readValue(outboxEvent.getPayload().asText(), Order.class);
-      Command command = buildCommand(outboxEvent, order);
+      UpdateAssetCommand command = UpdateAssetCommand.builder()
+          .outboxId(outboxEvent.getId())
+          .eventType(outboxEvent.getEventType())
+          .order(order)
+          .build();
 
       publish(command);
       acknowledgment.acknowledge();
@@ -65,33 +66,9 @@ public class OrderCreatedEventConsumer extends BeanAwareCommandPublisher {
     }
   }
 
-  @KafkaListener(topics = "order.public.outbox-dlt", groupId = "order-query-group", containerFactory = "kafkaListenerContainerFactory")
+  @KafkaListener(topics = "order.public.outbox-dlt", groupId = "asset-group", containerFactory = "kafkaListenerContainerFactory")
   public void consumeCreateOrderOutboxEventDLT(@Headers Map<String, Object> headers, String eventPayload,
       Acknowledgment acknowledgment) {
     acknowledgment.acknowledge();
-  }
-
-  private Command buildCommand(OutboxEvent outboxEvent, Order order) {
-    return switch (outboxEvent.getEventType()) {
-      case ORDER_CREATED -> CreateOrderCommand.builder()
-          .outboxId(outboxEvent.getId())
-          .eventType(outboxEvent.getEventType())
-          .order(order)
-          .build();
-
-      case ORDER_UPDATED -> UpdateOrderCommand.builder()
-          .outboxId(outboxEvent.getId())
-          .eventType(outboxEvent.getEventType())
-          .order(order)
-          .build();
-
-      case ORDER_CANCELLED -> CancelOrderCommand.builder()
-          .outboxId(outboxEvent.getId())
-          .eventType(outboxEvent.getEventType())
-          .order(order)
-          .build();
-
-      default -> throw new IllegalArgumentException("Unknown event type: " + outboxEvent.getEventType());
-    };
   }
 }

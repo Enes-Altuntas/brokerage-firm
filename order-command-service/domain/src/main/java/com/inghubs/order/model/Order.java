@@ -19,6 +19,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Order {
 
+  public static final String SYSTEM = "SYSTEM";
   private UUID id;
 
   private UUID customerId;
@@ -63,13 +64,25 @@ public class Order {
 
   public void reserve() {
     this.status = OrderStatus.PENDING;
-    this.updatedBy = "SYSTEM";
+    this.updatedBy = SYSTEM;
     this.updatedAt = Instant.now();
   }
 
   public void reject() {
     this.status = OrderStatus.REJECTED;
-    this.updatedBy = "SYSTEM";
+    this.updatedBy = SYSTEM;
+    this.updatedAt = Instant.now();
+  }
+
+  public void requestCancel() {
+    this.status = OrderStatus.CANCEL_REQUESTED;
+    this.updatedBy = SYSTEM;
+    this.updatedAt = Instant.now();
+  }
+
+  public void cancel() {
+    this.status = OrderStatus.CANCELED;
+    this.updatedBy = SYSTEM;
     this.updatedAt = Instant.now();
   }
 }
