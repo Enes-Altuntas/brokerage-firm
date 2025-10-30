@@ -31,9 +31,6 @@ public class OrderDocument {
   private UUID customerId;
 
   @Field(type = FieldType.Keyword)
-  private UUID assetId;
-
-  @Field(type = FieldType.Keyword)
   private String assetName;
 
   @Field(type = FieldType.Keyword)
@@ -66,7 +63,6 @@ public class OrderDocument {
   public OrderDocument(Order order) {
     this.id = order.getId();
     this.customerId = order.getCustomerId();
-    this.assetId = order.getAssetId();
     this.assetName = order.getAssetName();
     this.side = order.getSide();
     this.size = order.getSize();
@@ -83,7 +79,6 @@ public class OrderDocument {
     return Order.builder()
         .id(id)
         .customerId(customerId)
-        .assetId(assetId)
         .assetName(assetName)
         .side(side)
         .size(size)

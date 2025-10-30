@@ -5,10 +5,8 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AssetRepository extends JpaRepository<AssetEntity, UUID> {
+public interface AssetRepository extends JpaRepository<AssetEntity, AssetEntity.AssetId> {
 
-  Optional<AssetEntity> findByIdAndCustomerId(UUID id, UUID customerId);
-
-  Optional<AssetEntity> findByAssetNameAndCustomerId(String assetName, UUID customerId);
+  Optional<AssetEntity> findByIdAssetNameAndIdCustomerId(String assetName, UUID customerId);
 
 }

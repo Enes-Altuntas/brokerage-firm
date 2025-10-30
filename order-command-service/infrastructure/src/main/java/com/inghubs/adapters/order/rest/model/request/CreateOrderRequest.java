@@ -9,9 +9,6 @@ import java.util.UUID;
 
 public record CreateOrderRequest(
 
-    @NotNull
-    UUID assetId,
-
     @NotBlank
     String assetName,
 
@@ -27,7 +24,6 @@ public record CreateOrderRequest(
 ) {
   public CreateOrderCommand toCommand(UUID customerId) {
     return CreateOrderCommand.builder()
-        .assetId(assetId)
         .customerId(customerId)
         .assetName(assetName)
         .side(side)

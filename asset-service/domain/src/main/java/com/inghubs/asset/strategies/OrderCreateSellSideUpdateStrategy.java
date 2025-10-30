@@ -27,11 +27,9 @@ public class OrderCreateSellSideUpdateStrategy implements OrderCreateAssetUpdate
   public void updateAsset(UpdateAssetCommand command) {
     Order order = command.getOrder();
 
-    Asset asset = assetPort.retrieveCustomerAsset(order.getAssetId(), order.getCustomerId());
-
+    Asset asset = assetPort.retrieveCustomerAsset(order.getAssetName(), order.getCustomerId());
     transactionTemplate.executeWithoutResult(status -> {
       boolean isValid = asset != null
-          && asset.getAssetName().equals(order.getAssetName())
           && !asset.getAssetName().equals(TRY)
           && asset.getUsableSize().compareTo(order.getSize()) >= 0;
 

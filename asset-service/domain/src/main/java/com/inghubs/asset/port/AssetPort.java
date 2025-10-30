@@ -5,9 +5,7 @@ import java.util.UUID;
 
 public interface AssetPort {
 
-  Asset retrieveCustomerAsset(UUID id, UUID customerId);
-
-  Asset retrieveCustomerTRYAsset(UUID customerId);
+  Asset retrieveCustomerAsset(String assetName, UUID customerId);
 
   Asset updateOrSaveAsset(Asset asset);
 

@@ -2,14 +2,15 @@ package com.inghubs.adapters.asset.jpa.entity;
 
 import com.inghubs.asset.model.Asset;
 import com.inghubs.common.jpa.entity.BaseEntity;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,22 +25,14 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "assets")
 public class AssetEntity extends BaseEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
-
-  private UUID customerId;
-
-  private String assetName;
+  @EmbeddedId
+  private AssetId id;
 
   private BigDecimal size;
-
   private BigDecimal usableSize;
 
   public AssetEntity(Asset asset) {
-    this.id = asset.getId();
-    this.customerId = asset.getCustomerId();
-    this.assetName = asset.getAssetName();
+    this.id = new AssetId(asset.getCustomerId(), asset.getAssetName());
     this.size = asset.getSize();
     this.usableSize = asset.getUsableSize();
     setCreatedBy(asset.getCreatedBy());
@@ -51,9 +44,8 @@ public class AssetEntity extends BaseEntity {
 
   public Asset toDomain() {
     return Asset.builder()
-        .id(id)
-        .customerId(customerId)
-        .assetName(assetName)
+        .customerId(id.getCustomerId())
+        .assetName(id.getAssetName())
         .size(size)
         .usableSize(usableSize)
         .createdBy(getCreatedBy())
@@ -64,4 +56,14 @@ public class AssetEntity extends BaseEntity {
         .build();
   }
 
+  @Getter
+  @Embeddable
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @EqualsAndHashCode
+  public static class AssetId implements Serializable {
+
+    private UUID customerId;
+    private String assetName;
+  }
 }

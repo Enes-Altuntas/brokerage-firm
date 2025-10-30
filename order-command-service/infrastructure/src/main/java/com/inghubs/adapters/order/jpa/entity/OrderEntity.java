@@ -34,8 +34,6 @@ public class OrderEntity extends BaseEntity {
 
   private UUID customerId;
 
-  private UUID assetId;
-
   private String assetName;
 
   @Enumerated(EnumType.STRING)
@@ -51,7 +49,6 @@ public class OrderEntity extends BaseEntity {
   public OrderEntity(Order order) {
     this.id = order.getId();
     this.customerId = order.getCustomerId();
-    this.assetId = order.getAssetId();
     this.assetName = order.getAssetName();
     this.side = order.getSide();
     this.size = order.getSize();
@@ -68,7 +65,6 @@ public class OrderEntity extends BaseEntity {
     return Order.builder()
         .id(id)
         .customerId(customerId)
-        .assetId(assetId)
         .assetName(assetName)
         .side(side)
         .size(size)

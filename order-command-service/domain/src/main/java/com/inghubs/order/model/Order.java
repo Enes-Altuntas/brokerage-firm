@@ -24,8 +24,6 @@ public class Order {
 
   private UUID customerId;
 
-  private UUID assetId;
-
   private String assetName;
 
   private OrderSide side;
@@ -49,7 +47,6 @@ public class Order {
   public static Order initializeOrder(CreateOrderCommand command) {
     return Order.builder()
         .customerId(command.getCustomerId())
-        .assetId(command.getAssetId())
         .assetName(command.getAssetName())
         .side(command.getSide())
         .size(command.getSize())

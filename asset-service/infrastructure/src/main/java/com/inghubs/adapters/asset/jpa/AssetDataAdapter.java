@@ -17,20 +17,8 @@ public class AssetDataAdapter implements AssetPort {
   private final AssetRepository assetRepository;
 
   @Override
-  public Asset retrieveCustomerAsset(UUID id, UUID customerId) {
-
-    Optional<AssetEntity> entity = assetRepository.findByIdAndCustomerId(id, customerId);
-
-    if(entity.isEmpty()) {
-      return null;
-    }
-
-    return entity.map(AssetEntity::toDomain).orElse(null);
-  }
-
-  @Override
-  public Asset retrieveCustomerTRYAsset(UUID customerId) {
-    Optional<AssetEntity> entity = assetRepository.findByAssetNameAndCustomerId(TRY, customerId);
+  public Asset retrieveCustomerAsset(String assetName, UUID customerId) {
+    Optional<AssetEntity> entity = assetRepository.findByIdAssetNameAndIdCustomerId(assetName, customerId);
 
     if(entity.isEmpty()) {
       return null;

@@ -22,8 +22,6 @@ public class Order {
 
   private UUID customerId;
 
-  private UUID assetId;
-
   private String assetName;
 
   private OrderSide side;

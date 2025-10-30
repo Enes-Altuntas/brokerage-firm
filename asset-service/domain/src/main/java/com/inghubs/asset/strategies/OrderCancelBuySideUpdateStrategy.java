@@ -27,14 +27,9 @@ public class OrderCancelBuySideUpdateStrategy implements OrderCancelAssetUpdateS
   public void updateAsset(UpdateAssetCommand command) {
     Order order = command.getOrder();
 
-    Asset tryAsset = assetPort.retrieveCustomerTRYAsset(order.getCustomerId());
-    Asset buyAsset = assetPort.retrieveCustomerAsset(order.getAssetId(), order.getCustomerId());
-
+    Asset tryAsset = assetPort.retrieveCustomerAsset("TRY", order.getCustomerId());
     transactionTemplate.executeWithoutResult(status -> {
       boolean isValid = tryAsset != null
-          && buyAsset != null
-          && buyAsset.getAssetName().equals(order.getAssetName())
-          && !buyAsset.getAssetName().equals(TRY)
           && tryAsset.getUsableSize().compareTo(order.getSize().multiply(order.getPrice())) >= 0;
 
       if(isValid) {
