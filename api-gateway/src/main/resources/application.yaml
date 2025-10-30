@@ -1,5 +1,5 @@
 server:
-  port: 9050
+  port: ${SERVER_PORT:9051}
 
 spring:
   application:
@@ -29,7 +29,7 @@ spring:
         wiretap: true
       routes:
         - id: auth-service
-          uri: http://localhost:9039
+          uri: ${AUTH_SERVICE_URL:http://localhost:9039}
           predicates:
             - Path=/auth/**, /swagger-ui/**, /openapi/auth-service/**
           filters:
@@ -38,7 +38,7 @@ spring:
             - AddRequestHeader=x-service-type, Auth
 
         - id: order-command-service
-          uri: http://localhost:9040
+          uri: ${ORDER_COMMAND_SERVICE_URL:http://localhost:9040}
           predicates:
             - Path=/order-command/**, /swagger-ui/**, /openapi/order-command-service/**
           filters:
@@ -47,7 +47,7 @@ spring:
             - AddRequestHeader=x-service-type, OrderCommand
 
         - id: order-query-service
-          uri: http://localhost:9041
+          uri: ${ORDER_QUERY_SERVICE_URL:http://localhost:9041}
           predicates:
             - Path=/order-query/**, /swagger-ui/**, /openapi/order-query-service/**
           filters:
@@ -56,7 +56,7 @@ spring:
             - AddRequestHeader=x-service-type, OrderQuery
 
         - id: asset-service
-          uri: http://localhost:9042
+          uri: ${ASSET_SERVICE_URL:http://localhost:9042}
           predicates:
             - Path=/asset/**, /swagger-ui/**, /openapi/asset-service/**
           filters:
@@ -67,7 +67,7 @@ spring:
 gateway:
   service:
     properties:
-      token-validation-endpoint: http://localhost:9039
+      token-validation-endpoint: ${AUTH_SERVICE_URL:http://localhost:9039}
 
       auth-service:
         expose-unsecured-urls: true

@@ -1,5 +1,70 @@
 version: '3.8'
 services:
+
+  api-gw:
+    container_name: api-gw
+    build:
+      context: ./api-gateway
+    ports:
+      - "9050:9050"
+    environment:
+      SERVER_PORT: 9050
+      ORDER_COMMAND_SERVICE_URL: http://order-command-service:9040
+      ORDER_QUERY_SERVICE_URL: http://order-query-service:9041
+      ASSET_SERVICE_URL: http://asset-service:9042
+      AUTH_SERVICE_URL: http://wiremock:8080
+
+  order-command-service:
+    container_name: order-command-service
+    build:
+      context: ./order-command-service
+    environment:
+      SERVER_PORT: 9040
+      DB_HOST: orderdb
+      DB_PORT: 5432
+      DB_NAME: order
+      DB_USERNAME: admin
+      DB_PASSWORD: admin
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - orderdb
+      - kafka
+
+  order-query-service:
+    container_name: order-query-service
+    build:
+      context: ./order-query-service
+    environment:
+      SERVER_PORT: 9041
+      DB_HOST: orderdb
+      DB_PORT: 5432
+      DB_NAME: order
+      DB_USERNAME: admin
+      DB_PASSWORD: admin
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      ELASTICSEARCH_URI: http://elasticsearch:9200
+    depends_on:
+      - orderdb
+      - kafka
+      - elasticsearch
+      - order-command-service
+
+  asset-service:
+    container_name: asset-service
+    build:
+      context: ./asset-service
+    environment:
+      SERVER_PORT: 9042
+      DB_HOST: assetdb
+      DB_PORT: 5432
+      DB_NAME: asset
+      DB_USERNAME: admin
+      DB_PASSWORD: admin
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - assetdb
+      - kafka
+
   wiremock:
     image: wiremock/wiremock:2.35.0
     container_name: wiremock
@@ -84,7 +149,7 @@ services:
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
@@ -100,7 +165,7 @@ services:
       - 9200:9200
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.17.0
+    image: docker.elastic.co/kibana/kibana:8.15.0
     container_name: kibana
     depends_on:
       - elasticsearch
