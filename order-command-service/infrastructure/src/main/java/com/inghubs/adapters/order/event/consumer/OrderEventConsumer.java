@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inghubs.adapters.order.event.consumer.model.OutboxEvent;
 import com.inghubs.common.command.BeanAwareCommandPublisher;
+import com.inghubs.common.model.Command;
+import com.inghubs.order.command.CancelOrderCommand;
 import com.inghubs.order.command.UpdateOrderCommand;
 import com.inghubs.order.model.Order;
 import java.util.Map;
@@ -54,11 +56,7 @@ public class OrderEventConsumer extends BeanAwareCommandPublisher {
       }
 
       Order order = objectMapper.readValue(outboxEvent.getPayload().asText(), Order.class);
-      UpdateOrderCommand command = UpdateOrderCommand.builder()
-          .outboxId(outboxEvent.getId())
-          .eventType(outboxEvent.getEventType())
-          .order(order)
-          .build();
+      Command command = buildCommand(outboxEvent, order);
 
       publish(command);
       acknowledgment.acknowledge();
@@ -72,5 +70,21 @@ public class OrderEventConsumer extends BeanAwareCommandPublisher {
   public void consumeCreateOrderOutboxEventDLT(@Headers Map<String, Object> headers, String eventPayload,
       Acknowledgment acknowledgment) {
     acknowledgment.acknowledge();
+  }
+
+  public Command buildCommand(OutboxEvent outboxEvent, Order order) {
+    if(outboxEvent.getEventType().equals("ORDER_VALIDATED") || outboxEvent.getEventType().equals("ORDER_REJECTED")) {
+      return UpdateOrderCommand.builder()
+          .outboxId(outboxEvent.getId())
+          .eventType(outboxEvent.getEventType())
+          .order(order)
+          .build();
+    } else {
+      return CancelOrderCommand.builder()
+          .outboxId(outboxEvent.getId())
+          .eventType(outboxEvent.getEventType())
+          .order(order)
+          .build();
+    }
   }
 }

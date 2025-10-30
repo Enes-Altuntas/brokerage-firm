@@ -48,6 +48,11 @@
       <version>11.10.0</version>
     </dependency>
     <dependency>
+      <artifactId>redisson</artifactId>
+      <groupId>org.redisson</groupId>
+      <version>3.28.0</version>
+    </dependency>
+    <dependency>
       <artifactId>postgresql</artifactId>
       <groupId>org.postgresql</groupId>
       <scope>runtime</scope>

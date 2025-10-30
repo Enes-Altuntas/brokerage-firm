@@ -7,6 +7,6 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @SuperBuilder
-public class UpdateOrderCommand extends Event implements Command {
+public class CancelOrderCommand extends Event implements Command {
 
 }

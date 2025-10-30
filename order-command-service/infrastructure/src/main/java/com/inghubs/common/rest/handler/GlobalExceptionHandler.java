@@ -1,10 +1,12 @@
 package com.inghubs.common.rest.handler;
 
+import com.inghubs.common.exception.RedisLockException;
 import com.inghubs.common.locale.LocaleUtil;
 import com.inghubs.common.rest.base.BaseController;
 import com.inghubs.common.rest.model.ErrorResponse;
 import com.inghubs.common.rest.model.FieldValidationResponse;
 import com.inghubs.common.rest.model.GenericResponse;
+import com.inghubs.order.exception.OrderBusinessException;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -25,6 +27,28 @@ public class GlobalExceptionHandler extends BaseController {
 
   private final LocaleUtil localeUtil;
   private final MessageSource messageSource;
+
+  @ExceptionHandler(RedisLockException.class)
+  public ResponseEntity<GenericResponse<ErrorResponse>> handleRedisLockException(
+      RedisLockException ex) {
+    log.error(ex.getMessage(), ex);
+
+    ErrorResponse error = new ErrorResponse(ex.getErrorCode(),
+        getMessageFromSourceWithLocale(ex.getErrorCode(), ex.getParams()));
+
+    return ResponseEntity.badRequest().body(respond(error));
+  }
+
+  @ExceptionHandler(OrderBusinessException.class)
+  public ResponseEntity<GenericResponse<ErrorResponse>> handleOrderBusinessException(
+      OrderBusinessException ex) {
+    log.error(ex.getMessage(), ex);
+
+    ErrorResponse error = new ErrorResponse(ex.getErrorCode(),
+        getMessageFromSourceWithLocale(ex.getErrorCode(), ex.getParams()));
+
+    return ResponseEntity.badRequest().body(respond(error));
+  }
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<GenericResponse<ErrorResponse>> handleHttpMessageNotReadableException(

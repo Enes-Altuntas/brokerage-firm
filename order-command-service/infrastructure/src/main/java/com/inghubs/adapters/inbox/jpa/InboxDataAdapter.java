@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inghubs.adapters.inbox.jpa.entity.InboxEntity;
 import com.inghubs.adapters.inbox.jpa.repository.InboxRepository;
+import com.inghubs.common.model.Event;
 import com.inghubs.inbox.model.Inbox;
 import com.inghubs.inbox.port.InboxPort;
-import com.inghubs.order.command.UpdateOrderCommand;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,14 +35,14 @@ public class InboxDataAdapter implements InboxPort {
   }
 
   @Override
-  public void createInboxEntity(UpdateOrderCommand command) {
-    JsonNode payload = objectMapper.valueToTree(command.getOrder());
+  public void createInboxEntity(Event event) {
+    JsonNode payload = objectMapper.valueToTree(event.getOrder());
 
     InboxEntity entity = InboxEntity.builder()
-        .id(command.getOutboxId())
-        .aggregateId(command.getOrder().getId())
+        .id(event.getOutboxId())
+        .aggregateId(event.getOrder().getId())
         .payload(payload)
-        .eventType(command.getEventType())
+        .eventType(event.getEventType())
         .aggregateType(ORDER)
         .createdAt(Instant.now())
         .updatedAt(Instant.now())

@@ -52,6 +52,11 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <artifactId>redisson</artifactId>
+      <groupId>org.redisson</groupId>
+      <version>3.28.0</version>
+    </dependency>
+    <dependency>
       <artifactId>flyway-database-postgresql</artifactId>
       <groupId>org.flywaydb</groupId>
       <scope>runtime</scope>

@@ -26,6 +26,9 @@ services:
       DB_USERNAME: admin
       DB_PASSWORD: admin
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      REDIS_PASSWORD: redisadmin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       - orderdb
       - kafka
@@ -61,6 +64,9 @@ services:
       DB_USERNAME: admin
       DB_PASSWORD: admin
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      REDIS_PASSWORD: redisadmin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       - assetdb
       - kafka

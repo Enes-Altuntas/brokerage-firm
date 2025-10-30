@@ -5,6 +5,12 @@ spring:
   application:
     name: order-command-service
 
+  data:
+    redis:
+      port: ${REDIS_PORT:6379}
+      host: ${REDIS_HOST:localhost}
+      password: ${REDIS_PASSWORD:redisadmin}
+
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:order}
     username: ${DB_USERNAME:admin}
