@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/user/account",
+    "headers": {
+      "Authorization": {
+        "matches": "Bearer token-admin"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id": "fcd546d0-2634-443e-9034-863d7feb92de",
+      "role": "ADMIN"
+    }
+  }
+}

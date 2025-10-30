@@ -76,12 +76,14 @@ public class GatewayServiceProperties {
       return true;
     }
 
-    List<String> paths = rolePathMapping.get(roleType.toString());
-    if (paths == null || paths.isEmpty()) {
+    List<String> patterns = rolePathMapping.get(roleType.toString());
+    if (patterns == null || patterns.isEmpty()) {
       return false;
     }
 
-    return paths.contains(path);
+    AntPathMatcher matcher = new AntPathMatcher();
+
+    return patterns.stream().anyMatch(pattern -> matcher.match(pattern, path));
   }
 
   private boolean isSecured(String path, UnsecureUrlDTO unsecureUrlDTO) {

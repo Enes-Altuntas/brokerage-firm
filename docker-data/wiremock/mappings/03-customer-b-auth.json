@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/user/account",
+    "headers": {
+      "Authorization": {
+        "matches": "Bearer token-customer-b"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id": "d617deb3-4000-459c-bcfb-d5b08454d061",
+      "role": "CUSTOMER"
+    }
+  }
+}

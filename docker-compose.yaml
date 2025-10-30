@@ -1,5 +1,13 @@
 version: '3.8'
 services:
+  wiremock:
+    image: wiremock/wiremock:2.35.0
+    container_name: wiremock
+    ports:
+      - "9039:8080"
+    volumes:
+      - ./docker-data/wiremock/mappings:/home/wiremock/mappings
+
   redis:
     image: redis:latest
     container_name: redis

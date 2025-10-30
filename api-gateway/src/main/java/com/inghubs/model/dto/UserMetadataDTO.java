@@ -16,6 +16,6 @@ import lombok.ToString;
 public class UserMetadataDTO {
 
   private String id;
-  private RoleType Role;
+  private RoleType role;
 
 }

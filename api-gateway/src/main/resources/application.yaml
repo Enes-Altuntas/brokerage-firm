@@ -101,11 +101,11 @@ gateway:
         unsecured-urls:
           - /asset/swagger-ui/**
           - /asset/openapi/**
-      rolePathMapping:
-        ADMIN:
-          - /asset/api/v1/admin/asset/**
-        CUSTOMER:
-          - /asset/api/v1/asset/**
+        rolePathMapping:
+          ADMIN:
+            - /asset/api/v1/admin/asset/**
+          CUSTOMER:
+            - /asset/api/v1/asset/**
 
 logging:
   level:

@@ -6,6 +6,7 @@ import com.inghubs.integrator.model.AuthServiceErrorResponse;
 import com.inghubs.interceptor.ClientLoggerRequestInterceptor;
 import com.inghubs.properties.GatewayServiceProperties;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +34,7 @@ public class AuthRestClientConfig {
 
           AuthServiceErrorResponse errorResponse = objectMapper.readValue(resBody,
               AuthServiceErrorResponse.class);
+          errorResponse.setTimestamp(Instant.now().toString());
 
           throw new AuthRestClientException(res.getStatusCode().value(), errorResponse);
         })
