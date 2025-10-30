@@ -1,0 +1,112 @@
+server:
+  port: 9050
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - OPTIONS
+              - PUT
+              - DELETE
+              - PATCH
+            allowedHeaders: "*"
+            maxAge: 3600
+      discovery:
+        locator:
+          enabled: true
+      httpclient:
+        wiretap: true
+      httpserver:
+        wiretap: true
+      routes:
+        - id: auth-service
+          uri: http://localhost:9039
+          predicates:
+            - Path=/auth/**, /swagger-ui/**, /openapi/auth-service/**
+          filters:
+            - AuthFilter
+            - RewritePath=/auth(?<path>.*), /$\{path}
+            - AddRequestHeader=x-service-type, Auth
+
+        - id: order-command-service
+          uri: http://localhost:9040
+          predicates:
+            - Path=/order-command/**, /swagger-ui/**, /openapi/order-command-service/**
+          filters:
+            - OrderCommandFilter
+            - RewritePath=/order-command(?<path>.*), /$\{path}
+            - AddRequestHeader=x-service-type, OrderCommand
+
+        - id: order-query-service
+          uri: http://localhost:9041
+          predicates:
+            - Path=/order-query/**, /swagger-ui/**, /openapi/order-query-service/**
+          filters:
+            - OrderQueryFilter
+            - RewritePath=/order-query(?<path>.*), /$\{path}
+            - AddRequestHeader=x-service-type, OrderQuery
+
+        - id: asset-service
+          uri: http://localhost:9042
+          predicates:
+            - Path=/asset/**, /swagger-ui/**, /openapi/asset-service/**
+          filters:
+            - AssetFilter
+            - RewritePath=/asset(?<path>.*), /$\{path}
+            - AddRequestHeader=x-service-type, Asset
+
+gateway:
+  service:
+    properties:
+      token-validation-endpoint: http://localhost:9039
+
+      auth-service:
+        expose-unsecured-urls: true
+        unsecured-urls:
+          - /auth/**
+
+      order-command-service:
+        expose-unsecured-urls: true
+        unsecured-urls:
+          - /order-command/swagger-ui/**
+          - /order-command/openapi/**
+        rolePathMapping:
+          ADMIN:
+            - /order-command/api/v1/admin/order/**
+          CUSTOMER:
+            - /order-command/api/v1/order/**
+
+      order-query-service:
+        expose-unsecured-urls: true
+        unsecured-urls:
+          - /order-query/swagger-ui/**
+          - /order-query/openapi/**
+        rolePathMapping:
+          ADMIN:
+            - /order-query/api/v1/admin/order/**
+          CUSTOMER:
+            - /order-query/api/v1/order/**
+
+      asset-service:
+        expose-unsecured-urls: true
+        unsecured-urls:
+          - /asset/swagger-ui/**
+          - /asset/openapi/**
+      rolePathMapping:
+        ADMIN:
+          - /asset/api/v1/admin/asset/**
+        CUSTOMER:
+          - /asset/api/v1/asset/**
+
+logging:
+  level:
+    io.netty.resolver.dns.DnsServerAddressStreamProviders: OFF
