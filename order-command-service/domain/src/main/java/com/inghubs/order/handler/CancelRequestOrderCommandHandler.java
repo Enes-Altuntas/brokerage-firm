@@ -25,7 +25,7 @@ public class CancelRequestOrderCommandHandler extends ObservableCommandPublisher
 
   @Override
   public void handle(CancelRequestOrderCommand command) {
-    Order order = orderPort.retrieveOrder(command.getOrderId());
+    Order order = orderPort.retrieveOrder(command.getOrderId(), command.getCustomerId());
 
     if (order == null) {
       throw new RuntimeException();

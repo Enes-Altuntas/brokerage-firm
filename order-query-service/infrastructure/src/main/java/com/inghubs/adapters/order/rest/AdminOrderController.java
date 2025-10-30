@@ -15,24 +15,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/order")
-public class OrderController extends BaseController {
+@RequestMapping("api/v1/admin/order")
+public class AdminOrderController extends BaseController {
 
   private final OrderQueryService orderQueryService;
 
-  @GetMapping("/{orderId}")
+  @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<GenericResponse<OrderResponse>> fetchOrders(
-      @RequestHeader(name = "x-customer-id") UUID customerId,
-      @PathVariable UUID orderId) {
+  public ResponseEntity<GenericResponse<OrderResponse>> adminFetchOrders(
+      @RequestParam(name = "orderId") UUID orderId,
+      @RequestParam(name = "customerId") UUID customerId) {
 
     OrderFilterRequest filterRequest = OrderFilterRequest.builder()
         .orderId(orderId)
@@ -45,14 +44,12 @@ public class OrderController extends BaseController {
         .body(respond(OrderResponse.toResponse(orderDocument)));
   }
 
-  @GetMapping
+  @GetMapping("/list")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<GenericResponse<Page<OrderResponse>>> fetchOrder(
-      @RequestHeader(name = "x-customer-id") UUID customerId,
+  public ResponseEntity<GenericResponse<Page<OrderResponse>>> adminFetchOrder(
       @ModelAttribute @Valid OrderFilterRequest filterRequest,
-      @ModelAttribute @Valid PaginationRequest paginationRequest) {
-
-    filterRequest.setCustomerId(customerId);
+      @ModelAttribute @Valid PaginationRequest paginationRequest
+  ) {
 
     Page<OrderDocument> query = orderQueryService.query(filterRequest, paginationRequest);
 

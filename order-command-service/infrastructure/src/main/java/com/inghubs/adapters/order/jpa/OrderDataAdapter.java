@@ -28,8 +28,8 @@ public class OrderDataAdapter implements OrderPort {
   }
 
   @Override
-  public Order retrieveOrder(UUID orderId) {
-    Optional<OrderEntity> entity = orderRepository.findById(orderId);
+  public Order retrieveOrder(UUID orderId, UUID customerId) {
+    Optional<OrderEntity> entity = orderRepository.findByIdAndCustomerId(orderId, customerId);
 
     if (entity.isEmpty()) {
       return null;

@@ -40,7 +40,8 @@ public class UpdateOrderCommandHandler extends ObservableCommandPublisher
       return;
     }
 
-    Order order = orderPort.retrieveOrder(command.getOrder().getId());
+    Order order = orderPort.retrieveOrder(command.getOrder().getId(),
+        command.getOrder().getCustomerId());
 
     transactionTemplate.executeWithoutResult(status -> {
       if(command.getEventType().equals(ORDER_VALIDATED)) {

@@ -17,22 +17,22 @@ public class OrderCriteriaBuilder {
   public static Criteria buildCriteria(OrderFilterRequest filterRequest) {
     List<Criteria> criteriaList = new ArrayList<>();
 
-    if (filterRequest.orderId() != null) {
+    if (filterRequest.getOrderId() != null) {
       criteriaList.add(Criteria.where(ID)
-          .is(filterRequest.orderId()));
+          .is(filterRequest.getOrderId()));
     }
 
-    if (filterRequest.customerId() != null) {
+    if (filterRequest.getCustomerId() != null) {
       criteriaList.add(Criteria.where(CUSTOMER_ID)
-          .is(filterRequest.customerId()));
+          .is(filterRequest.getCustomerId()));
     }
 
-    if (filterRequest.status() != null) {
-      criteriaList.add(Criteria.where(STATUS).is(filterRequest.status()));
+    if (filterRequest.getStatus() != null) {
+      criteriaList.add(Criteria.where(STATUS).is(filterRequest.getStatus()));
     }
 
-    if (filterRequest.assetName() != null) {
-      criteriaList.add(Criteria.where(ASSET_NAME).is(filterRequest.assetName()));
+    if (filterRequest.getAssetName() != null) {
+      criteriaList.add(Criteria.where(ASSET_NAME).is(filterRequest.getAssetName()));
     }
 
 

@@ -7,7 +7,10 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record CreateOrderRequest(
+public record AdminCreateOrderRequest(
+
+    @NotNull(message = "1002")
+    UUID customerId,
 
     @NotBlank(message = "1002")
     String assetName,
@@ -22,7 +25,7 @@ public record CreateOrderRequest(
     BigDecimal size
 
 ) {
-  public CreateOrderCommand toCommand(UUID customerId) {
+  public CreateOrderCommand toCommand() {
     return CreateOrderCommand.builder()
         .customerId(customerId)
         .assetName(assetName)

@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHitSupport;
@@ -68,16 +69,16 @@ public class OrderDataAdapter implements OrderPort, OrderQueryService {
   }
 
   @Override
-  public OrderDocument query(UUID orderId, UUID customerId) {
-    Optional<OrderDocument> orderDocument = orderRepository.findByIdAndCustomerId(orderId,
-        customerId);
+  public OrderDocument query(OrderFilterRequest filterRequest) {
+    Optional<OrderDocument> orderDocument = orderRepository
+        .findByIdAndCustomerId(filterRequest.getOrderId(), filterRequest.getCustomerId());
 
     return orderDocument.orElse(null);
   }
 
   private Pageable buildPageable(PaginationRequest paginationRequest) {
-    Sort.Direction direction = "DESC".equalsIgnoreCase(paginationRequest.direction())
-        ? Sort.Direction.DESC : Sort.Direction.ASC;
+    Sort.Direction direction = "ASC".equalsIgnoreCase(paginationRequest.direction())
+        ? Sort.Direction.ASC : Direction.DESC;
     Sort sort = Sort.by(direction, paginationRequest.sortBy() == null ? "createdAt" : paginationRequest.sortBy());
 
     return PageRequest.of(paginationRequest.page(), paginationRequest.size(), sort);

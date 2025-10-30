@@ -19,12 +19,12 @@ public class AssetSpecification {
     return (root, query, cb) -> {
       List<Predicate> predicates = new ArrayList<>();
 
-      if (filterRequest.customerId() != null) {
-        predicates.add(cb.equal(root.get(ID).get(CUSTOMER_ID), filterRequest.customerId()));
+      if (filterRequest.getCustomerId() != null) {
+        predicates.add(cb.equal(root.get(ID).get(CUSTOMER_ID), filterRequest.getCustomerId()));
       }
 
-      if (filterRequest.assetName() != null && !filterRequest.assetName().isBlank()) {
-        predicates.add(cb.equal(root.get(ID).get(ASSET_NAME), filterRequest.assetName()));
+      if (filterRequest.getAssetName() != null && !filterRequest.getAssetName().isBlank()) {
+        predicates.add(cb.equal(root.get(ID).get(ASSET_NAME), filterRequest.getAssetName()));
       }
 
       return cb.and(predicates.toArray(new Predicate[0]));

@@ -1,15 +1,21 @@
 package com.inghubs.adapters.asset.rest.model.request;
 
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Builder
-public record AssetFilterRequest(
+@AllArgsConstructor
+@NoArgsConstructor
+public class AssetFilterRequest {
 
-    UUID customerId,
+  private UUID customerId;
 
-    String assetName
-
-) {
+  private String assetName;
 
 }

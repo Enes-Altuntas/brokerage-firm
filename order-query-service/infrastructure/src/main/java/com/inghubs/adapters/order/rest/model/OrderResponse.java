@@ -31,6 +31,9 @@ public record OrderResponse(
 ) {
 
   public static OrderResponse toResponse(OrderDocument orderDocument) {
+    if(orderDocument == null) {
+      return null;
+    }
     return OrderResponse.builder()
         .id(orderDocument.getId())
         .customerId(orderDocument.getCustomerId())

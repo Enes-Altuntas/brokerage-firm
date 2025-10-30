@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AssetDataAdapter implements AssetPort, AssetQueryService {
 
-  public static final String TRY = "TRY";
   private final AssetRepository assetRepository;
 
   @Override
@@ -57,10 +56,10 @@ public class AssetDataAdapter implements AssetPort, AssetQueryService {
   }
 
   @Override
-  public AssetEntity query(String assetName, UUID customerId) {
+  public AssetEntity query(AssetFilterRequest filterRequest) {
 
     Optional<AssetEntity> entity = assetRepository.findByIdAssetNameAndIdCustomerId(
-        assetName, customerId);
+        filterRequest.getAssetName(), filterRequest.getCustomerId());
 
     return entity.orElse(null);
   }

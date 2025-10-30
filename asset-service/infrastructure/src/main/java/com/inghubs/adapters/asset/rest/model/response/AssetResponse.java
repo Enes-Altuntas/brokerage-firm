@@ -24,6 +24,9 @@ public record AssetResponse(
 ) {
 
   public static AssetResponse toResponse(AssetEntity asset) {
+    if (asset == null) {
+      return null;
+    }
     return AssetResponse.builder()
         .customerId(asset.getId().getCustomerId())
         .assetName(asset.getId().getAssetName())

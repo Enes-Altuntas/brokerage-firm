@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -29,6 +30,18 @@ public class GlobalExceptionHandler extends BaseController {
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<GenericResponse<ErrorResponse>> handleHttpMessageNotReadableException(
       HttpMessageNotReadableException ex) {
+    log.error(ex.getMessage(), ex);
+
+    ErrorResponse error = new ErrorResponse("1001",
+        getMessageFromSourceWithLocale("1001", null));
+
+    return ResponseEntity.badRequest().body(respond(error));
+  }
+
+
+  @ExceptionHandler(MissingServletRequestParameterException.class)
+  public ResponseEntity<GenericResponse<ErrorResponse>> handleMissingServletRequestParameterException(
+      MissingServletRequestParameterException ex) {
     log.error(ex.getMessage(), ex);
 
     ErrorResponse error = new ErrorResponse("1001",
