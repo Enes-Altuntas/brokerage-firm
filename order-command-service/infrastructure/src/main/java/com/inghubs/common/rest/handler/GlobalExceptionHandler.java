@@ -19,6 +19,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
 @Slf4j
 @RestControllerAdvice
@@ -30,8 +31,8 @@ public class GlobalExceptionHandler extends BaseController {
 
   @ExceptionHandler(RedisLockException.class)
   public ResponseEntity<GenericResponse<ErrorResponse>> handleRedisLockException(
-      RedisLockException ex) {
-    log.error(ex.getMessage(), ex);
+      RedisLockException ex, WebRequest webRequest) {
+    log.error("Exception occurred on request: {}", webRequest.getDescription(false), ex);
 
     ErrorResponse error = new ErrorResponse(ex.getErrorCode(),
         getMessageFromSourceWithLocale(ex.getErrorCode(), ex.getParams()));
@@ -41,8 +42,8 @@ public class GlobalExceptionHandler extends BaseController {
 
   @ExceptionHandler(OrderBusinessException.class)
   public ResponseEntity<GenericResponse<ErrorResponse>> handleOrderBusinessException(
-      OrderBusinessException ex) {
-    log.error(ex.getMessage(), ex);
+      OrderBusinessException ex, WebRequest webRequest) {
+    log.error("Exception occurred on request: {}", webRequest.getDescription(false), ex);
 
     ErrorResponse error = new ErrorResponse(ex.getErrorCode(),
         getMessageFromSourceWithLocale(ex.getErrorCode(), ex.getParams()));
@@ -52,8 +53,8 @@ public class GlobalExceptionHandler extends BaseController {
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<GenericResponse<ErrorResponse>> handleHttpMessageNotReadableException(
-      HttpMessageNotReadableException ex) {
-    log.error(ex.getMessage(), ex);
+      HttpMessageNotReadableException ex, WebRequest webRequest) {
+    log.error("Exception occurred on request: {}", webRequest.getDescription(false), ex);
 
     ErrorResponse error = new ErrorResponse("1001",
         getMessageFromSourceWithLocale("1001", null));
@@ -63,8 +64,8 @@ public class GlobalExceptionHandler extends BaseController {
 
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<GenericResponse<ErrorResponse>> handleIllegalArgumentException(
-      IllegalArgumentException ex) {
-    log.error(ex.getMessage(), ex);
+      IllegalArgumentException ex, WebRequest webRequest) {
+    log.error("Exception occurred on request: {}", webRequest.getDescription(false), ex);
 
     ErrorResponse error = new ErrorResponse("1001",
         getMessageFromSourceWithLocale("1001", null));
@@ -74,8 +75,8 @@ public class GlobalExceptionHandler extends BaseController {
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<GenericResponse<ErrorResponse>> handleMethodArgumentNotValidException(
-      MethodArgumentNotValidException ex) {
-    log.error(ex.getMessage(), ex);
+      MethodArgumentNotValidException ex, WebRequest webRequest) {
+    log.error("Exception occurred on request: {}", webRequest.getDescription(false), ex);
 
     ErrorResponse error = new ErrorResponse("1001",
         getMessageFromSourceWithLocale("1001", new Object[]{ex.getMessage()}));
@@ -88,8 +89,8 @@ public class GlobalExceptionHandler extends BaseController {
 
   @ExceptionHandler(MissingRequestHeaderException.class)
   public ResponseEntity<GenericResponse<ErrorResponse>> handleMissingRequestHeaderException(
-      MissingRequestHeaderException ex) {
-    log.error(ex.getMessage(), ex);
+      MissingRequestHeaderException ex, WebRequest webRequest) {
+    log.error("Exception occurred on request: {}", webRequest.getDescription(false), ex);
 
     ErrorResponse error = new ErrorResponse("1001",
         getMessageFromSourceWithLocale("1002", new Object[]{ex.getHeaderName()}));
@@ -98,8 +99,8 @@ public class GlobalExceptionHandler extends BaseController {
   }
 
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<GenericResponse<ErrorResponse>> handleGlobalException(Exception ex) {
-    log.error(ex.getMessage(), ex);
+  public ResponseEntity<GenericResponse<ErrorResponse>> handleGlobalException(Exception ex, WebRequest webRequest) {
+    log.error("Exception occurred on request: {}", webRequest.getDescription(false), ex);
 
     ErrorResponse error = new ErrorResponse("1000",
         getMessageFromSourceWithLocale("1000", null));

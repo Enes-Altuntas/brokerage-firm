@@ -11,15 +11,16 @@ import com.inghubs.order.model.Order;
 import com.inghubs.order.model.enums.OrderStatus;
 import com.inghubs.order.port.OrderPort;
 import com.inghubs.outbox.port.OutboxPort;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
+@Slf4j
 @Service
 public class CancelOrderCommandHandler extends ObservableCommandPublisher
     implements VoidCommandHandler<CancelOrderCommand> {
 
   public static final String ORDER_UPDATED = "ORDER_UPDATED";
-  public static final String ORDER_VALIDATED = "ORDER_VALIDATED";
   private static final String ORDER_CANCEL_CONFIRMED = "ORDER_CANCEL_CONFIRMED";
   private static final String ORDER_CANCEL_REJECTED = "ORDER_CANCEL_REJECTED";
   private final OrderPort orderPort;
@@ -41,24 +42,29 @@ public class CancelOrderCommandHandler extends ObservableCommandPublisher
 
   @Override
   public void handle(CancelOrderCommand command) {
+    log.info("Handling cancel order command: {}", command);
     lockPort.execute(() -> {
 
       Inbox inbox = inboxPort.retrieveInboxById(command.getOutboxId());
       if (inbox != null) {
+        log.info("Inbox already contains outboxId: {}, skipping cancel order command", command.getOutboxId());
         return;
       }
 
       Order order = orderPort.retrieveOrder(command.getOrder().getId(),
           command.getOrder().getCustomerId());
 
-      if(!order.getStatus().equals(OrderStatus.CANCEL_REQUESTED)) {
+      if (!order.getStatus().equals(OrderStatus.CANCEL_REQUESTED)) {
+        log.error("Order status is not CANCEL_REQUESTED for orderId: {}", order.getId());
         throw new OrderBusinessException("2001");
       }
 
       if (command.getEventType().equals(ORDER_CANCEL_CONFIRMED)) {
         order.cancel();
+        log.info("Order cancelled for orderId: {}", order.getId());
       } else if (command.getEventType().equals(ORDER_CANCEL_REJECTED)) {
         order.reserve();
+        log.info("Order reservation restored for orderId: {}", order.getId());
       }
 
       transactionTemplate.executeWithoutResult(status -> {
@@ -66,6 +72,7 @@ public class CancelOrderCommandHandler extends ObservableCommandPublisher
         inboxPort.createInboxEntity(command.getOutboxId(), command.getEventType(),
             command.getOrder().getId(), order);
         outboxPort.createOrderOutboxEntity(ORDER_UPDATED, order.getId(), order);
+        log.info("Cancel order command processed successfully for orderId: {}", order.getId());
       });
 
     }, command.getOrder().getId().toString());

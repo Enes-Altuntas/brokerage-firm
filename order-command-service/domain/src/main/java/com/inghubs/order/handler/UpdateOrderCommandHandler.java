@@ -11,17 +11,17 @@ import com.inghubs.order.model.Order;
 import com.inghubs.order.model.enums.OrderStatus;
 import com.inghubs.order.port.OrderPort;
 import com.inghubs.outbox.port.OutboxPort;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
+@Slf4j
 @Service
 public class UpdateOrderCommandHandler extends ObservableCommandPublisher
     implements VoidCommandHandler<UpdateOrderCommand> {
 
   public static final String ORDER_UPDATED = "ORDER_UPDATED";
   public static final String ORDER_VALIDATED = "ORDER_VALIDATED";
-  private static final String ORDER_CANCEL_CONFIRMED = "ORDER_CANCEL_CONFIRMED";
-  private static final String ORDER_CANCEL_REJECTED = "ORDER_CANCEL_REJECTED";
   private static final String ORDER_REJECTED = "ORDER_REJECTED";
   private final OrderPort orderPort;
   private final OutboxPort outboxPort;
@@ -42,10 +42,12 @@ public class UpdateOrderCommandHandler extends ObservableCommandPublisher
 
   @Override
   public void handle(UpdateOrderCommand command) {
+    log.info("Handling update order command: {}", command);
     lockPort.execute(() -> {
 
       Inbox inbox = inboxPort.retrieveInboxById(command.getOutboxId());
       if (inbox != null) {
+        log.info("Inbox already contains outboxId: {}, skipping update order command", command.getOutboxId());
         return;
       }
 
@@ -53,17 +55,21 @@ public class UpdateOrderCommandHandler extends ObservableCommandPublisher
           command.getOrder().getCustomerId());
 
       if (order == null) {
+        log.error("Order not found for orderId: {}", command.getOrder().getId());
         throw new OrderBusinessException("2000");
       }
 
-      if(order.getStatus() != OrderStatus.INIT) {
+      if (order.getStatus() != OrderStatus.INIT) {
+        log.error("Order status is not INIT for orderId: {}", order.getId());
         throw new OrderBusinessException("2001");
       }
 
-      if(command.getEventType().equals(ORDER_VALIDATED)) {
+      if (command.getEventType().equals(ORDER_VALIDATED)) {
         order.reserve();
-      } else if(command.getEventType().equals(ORDER_REJECTED)) {
+        log.info("Order reserved for orderId: {}", order.getId());
+      } else if (command.getEventType().equals(ORDER_REJECTED)) {
         order.reject();
+        log.info("Order rejected for orderId: {}", order.getId());
       }
 
       transactionTemplate.executeWithoutResult(status -> {
@@ -71,6 +77,7 @@ public class UpdateOrderCommandHandler extends ObservableCommandPublisher
         inboxPort.createInboxEntity(command.getOutboxId(), command.getEventType(),
             command.getOrder().getId(), order);
         outboxPort.createOrderOutboxEntity(ORDER_UPDATED, order.getId(), order);
+        log.info("Update order command processed successfully for orderId: {}", order.getId());
       });
 
     }, command.getOrder().getId().toString());
