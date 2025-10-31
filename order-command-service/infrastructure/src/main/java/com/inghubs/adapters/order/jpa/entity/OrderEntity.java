@@ -41,6 +41,8 @@ public class OrderEntity extends BaseEntity {
 
   private BigDecimal size;
 
+  private BigDecimal matchedSize;
+
   private BigDecimal price;
 
   @Enumerated(EnumType.STRING)
@@ -51,6 +53,7 @@ public class OrderEntity extends BaseEntity {
     this.customerId = order.getCustomerId();
     this.assetName = order.getAssetName();
     this.side = order.getSide();
+    this.matchedSize = order.getMatchedSize();
     this.size = order.getSize();
     this.price = order.getPrice();
     this.status = order.getStatus();
@@ -68,6 +71,7 @@ public class OrderEntity extends BaseEntity {
         .assetName(assetName)
         .side(side)
         .size(size)
+        .matchedSize(matchedSize)
         .price(price)
         .status(status)
         .createdBy(getCreatedBy())

@@ -30,6 +30,8 @@ public class Order {
 
   private BigDecimal size;
 
+  private BigDecimal matchedSize;
+
   private BigDecimal price;
 
   private OrderStatus status;
@@ -50,6 +52,7 @@ public class Order {
         .assetName(command.getAssetName())
         .side(command.getSide())
         .size(command.getSize())
+        .matchedSize(BigDecimal.ZERO)
         .price(command.getPrice())
         .status(OrderStatus.INIT)
         .createdBy(command.getCustomerId().toString())
@@ -79,6 +82,19 @@ public class Order {
 
   public void cancel() {
     this.status = OrderStatus.CANCELED;
+    this.updatedBy = SYSTEM;
+    this.updatedAt = Instant.now();
+  }
+
+  public void match(MatchOrder matchOrder) {
+    this.matchedSize = this.matchedSize.add(matchOrder.getMatchSize());
+
+    if(this.size.compareTo(this.matchedSize) > 0) {
+      this.status= OrderStatus.PARTIALLY_MATCHED;
+    } else {
+      this.status= OrderStatus.MATCHED;
+    }
+
     this.updatedBy = SYSTEM;
     this.updatedAt = Instant.now();
   }

@@ -40,6 +40,9 @@ public class OrderDocument {
   private BigDecimal size;
 
   @Field(type = FieldType.Double)
+  private BigDecimal matchedSize;
+
+  @Field(type = FieldType.Double)
   private BigDecimal price;
 
   @Field(type = FieldType.Keyword)
@@ -66,6 +69,7 @@ public class OrderDocument {
     this.assetName = order.getAssetName();
     this.side = order.getSide();
     this.size = order.getSize();
+    this.matchedSize = order.getMatchedSize();
     this.price = order.getPrice();
     this.status = order.getStatus();
     this.createdAt = order.getCreatedAt();
@@ -82,6 +86,7 @@ public class OrderDocument {
         .assetName(assetName)
         .side(side)
         .size(size)
+        .matchedSize(matchedSize)
         .price(price)
         .status(status)
         .createdAt(createdAt)

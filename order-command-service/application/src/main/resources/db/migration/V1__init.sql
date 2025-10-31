@@ -29,10 +29,11 @@ create table orders
         constraint orders_side_check
             check ((side)::text = ANY ((ARRAY ['BUY'::character varying, 'SELL'::character varying])::text[])),
     size        numeric(38, 2),
+    matched_size        numeric(38, 2),
     status      varchar(255)
         constraint orders_status_check
             check ((status)::text = ANY
-                   ((ARRAY ['INIT'::character varying, 'PENDING'::character varying, 'REJECTED'::character varying, 'MATCHED'::character varying, 'CANCEL_REQUESTED'::character varying, 'CANCELED'::character varying])::text[]))
+                   ((ARRAY ['INIT'::character varying, 'PENDING'::character varying, 'REJECTED'::character varying, 'MATCHED'::character varying, 'PARTIALLY_MATCHED'::character varying, 'CANCEL_REQUESTED'::character varying, 'CANCELED'::character varying])::text[]))
 );
 
 create table outbox

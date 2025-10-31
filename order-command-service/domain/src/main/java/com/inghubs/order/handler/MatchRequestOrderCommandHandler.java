@@ -11,6 +11,7 @@ import com.inghubs.order.model.enums.OrderStatus;
 import com.inghubs.order.port.OrderPort;
 import com.inghubs.outbox.port.OutboxPort;
 import java.math.BigDecimal;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,7 +39,8 @@ public class MatchRequestOrderCommandHandler  extends ObservableCommandPublisher
       if (buyOrder == null) {
         throw new OrderBusinessException("2000");
       }
-      if(buyOrder.getStatus() != OrderStatus.PENDING || buyOrder.getSide() != OrderSide.BUY) {
+      if((buyOrder.getStatus() != OrderStatus.PENDING && buyOrder.getStatus() != OrderStatus.PARTIALLY_MATCHED )
+          || buyOrder.getSide() != OrderSide.BUY) {
         throw new OrderBusinessException("2001");
       }
 
@@ -46,7 +48,8 @@ public class MatchRequestOrderCommandHandler  extends ObservableCommandPublisher
       if (sellOrder == null) {
         throw new OrderBusinessException("2000");
       }
-      if(sellOrder.getStatus() != OrderStatus.PENDING || sellOrder.getSide() != OrderSide.SELL) {
+      if((sellOrder.getStatus() != OrderStatus.PENDING && sellOrder.getStatus() != OrderStatus.PARTIALLY_MATCHED )
+          || sellOrder.getSide() != OrderSide.SELL) {
         throw new OrderBusinessException("2001");
       }
 
@@ -68,7 +71,8 @@ public class MatchRequestOrderCommandHandler  extends ObservableCommandPublisher
           .assetName(buyOrder.getAssetName())
           .priceDifference(priceDifference)
           .build();
-      outboxPort.createOrderOutboxEntity(event);
+
+      outboxPort.createOrderOutboxEntity("ORDER_MATCH_REQUESTED", UUID.randomUUID(), event);
 
     }, command.getBuyOrderId().toString(),command.getSellOrderId().toString());
   }

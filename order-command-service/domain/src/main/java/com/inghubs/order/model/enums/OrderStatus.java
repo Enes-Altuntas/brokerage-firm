@@ -4,6 +4,7 @@ public enum OrderStatus {
   INIT,
   PENDING,
   REJECTED,
+  PARTIALLY_MATCHED,
   MATCHED,
   CANCEL_REQUESTED,
   CANCELED

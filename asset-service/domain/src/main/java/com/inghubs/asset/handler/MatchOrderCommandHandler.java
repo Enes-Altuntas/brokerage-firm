@@ -41,10 +41,10 @@ public class MatchOrderCommandHandler extends ObservableCommandPublisher
   public void handle(MatchOrderCommand command) {
     log.info("Handling MatchOrderCommand: {}", command);
 
-    String buyOrderLock = command.getMatchOrder().getBuyOrderId() + ":" + command.getMatchOrder().getAssetName();
-    String sellOrderLock = command.getMatchOrder().getSellOrderId() + ":" + command.getMatchOrder().getAssetName();
+    String buyAssetLock = command.getMatchOrder().getBuyerCustomerId() + ":" + command.getMatchOrder().getAssetName();
+    String sellAssetLock = command.getMatchOrder().getSellerCustomerId() + ":" + command.getMatchOrder().getAssetName();
 
-    lockPort.execute(() -> processCommand(command), buyOrderLock, sellOrderLock);
+    lockPort.execute(() -> processCommand(command), buyAssetLock, sellAssetLock);
 
     log.info("Finished handling MatchOrderCommand for buyOrder={} sellOrder={}",
         command.getMatchOrder().getBuyOrderId(), command.getMatchOrder().getSellOrderId());
@@ -99,7 +99,9 @@ public class MatchOrderCommandHandler extends ObservableCommandPublisher
       BigDecimal totalCost, BigDecimal matchSize
   ) {
     buyerTRY.setSize(buyerTRY.getSize().subtract(totalCost).max(BigDecimal.ZERO));
-    buyerTRY.setUsableSize(buyerTRY.getUsableSize().add(command.getMatchOrder().getPriceDifference().multiply(matchSize)));
+    if(command.getMatchOrder().getPriceDifference().compareTo(BigDecimal.ZERO) > 0) {
+      buyerTRY.setUsableSize(buyerTRY.getUsableSize().add(command.getMatchOrder().getPriceDifference().multiply(matchSize)));
+    }
     buyerAsset.setUsableSize(buyerAsset.getUsableSize().add(matchSize).max(BigDecimal.ZERO));
     buyerAsset.setSize(buyerAsset.getSize().add(matchSize).max(BigDecimal.ZERO));
 

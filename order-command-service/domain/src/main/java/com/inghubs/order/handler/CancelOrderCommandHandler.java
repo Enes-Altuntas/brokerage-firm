@@ -63,8 +63,9 @@ public class CancelOrderCommandHandler extends ObservableCommandPublisher
 
       transactionTemplate.executeWithoutResult(status -> {
         orderPort.createOrUpdateOrder(order);
-        inboxPort.createInboxEntity(command);
-        outboxPort.createOrderOutboxEntity(ORDER_UPDATED, order);
+        inboxPort.createInboxEntity(command.getOutboxId(), command.getEventType(),
+            command.getOrder().getId(), order);
+        outboxPort.createOrderOutboxEntity(ORDER_UPDATED, order.getId(), order);
       });
 
     }, command.getOrder().getId().toString());

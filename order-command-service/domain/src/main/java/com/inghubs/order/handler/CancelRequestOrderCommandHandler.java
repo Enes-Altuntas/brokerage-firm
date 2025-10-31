@@ -49,7 +49,7 @@ public class CancelRequestOrderCommandHandler extends ObservableCommandPublisher
 
       transactionTemplate.executeWithoutResult(status -> {
         orderPort.createOrUpdateOrder(order);
-        outboxPort.createOrderOutboxEntity(ORDER_CANCEL_REQUESTED, order);
+        outboxPort.createOrderOutboxEntity(ORDER_CANCEL_REQUESTED, order.getId(), order);
       });
 
     }, command.getOrderId().toString());

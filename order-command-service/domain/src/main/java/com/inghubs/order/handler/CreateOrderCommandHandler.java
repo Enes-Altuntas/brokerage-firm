@@ -35,7 +35,7 @@ public class CreateOrderCommandHandler extends ObservableCommandPublisher
 
     Order order = orderPort.createOrUpdateOrder(initializedOrder);
 
-    outboxPort.createOrderOutboxEntity(ORDER_CREATED, order);
+    outboxPort.createOrderOutboxEntity(ORDER_CREATED, order.getId(), order);
 
     return order;
   }

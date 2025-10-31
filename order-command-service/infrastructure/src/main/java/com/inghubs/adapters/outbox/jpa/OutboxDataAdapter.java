@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inghubs.adapters.outbox.jpa.entity.OutboxEntity;
 import com.inghubs.adapters.outbox.jpa.repository.OutboxRepository;
-import com.inghubs.order.command.MatchRequestOrderCommand;
-import com.inghubs.order.model.Order;
 import com.inghubs.outbox.port.OutboxPort;
 import java.time.Instant;
 import java.util.UUID;
@@ -23,32 +21,14 @@ public class OutboxDataAdapter implements OutboxPort {
   private final ObjectMapper objectMapper;
 
   @Override
-  public void createOrderOutboxEntity(String eventType, Order order) {
-    JsonNode payload = objectMapper.valueToTree(order);
+  public void createOrderOutboxEntity(String eventType, UUID aggregateId, Object payloadObject) {
+    JsonNode payload = objectMapper.valueToTree(payloadObject);
 
     OutboxEntity entity = OutboxEntity.builder()
         .payload(payload)
-        .aggregateId(order.getId())
+        .aggregateId(aggregateId)
         .aggregateType(ORDER)
         .eventType(eventType)
-        .createdAt(Instant.now())
-        .updatedAt(Instant.now())
-        .createdBy(SYSTEM)
-        .updatedBy(SYSTEM)
-        .build();
-
-    outboxRepository.save(entity);
-  }
-
-  @Override
-  public void createOrderOutboxEntity(MatchRequestOrderCommand command) {
-    JsonNode payload = objectMapper.valueToTree(command);
-
-    OutboxEntity entity = OutboxEntity.builder()
-        .payload(payload)
-        .aggregateId(UUID.randomUUID())
-        .aggregateType(ORDER)
-        .eventType(ORDER_MATCH_REQUESTED)
         .createdAt(Instant.now())
         .updatedAt(Instant.now())
         .createdBy(SYSTEM)

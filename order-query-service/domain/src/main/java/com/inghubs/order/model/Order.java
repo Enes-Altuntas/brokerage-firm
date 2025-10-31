@@ -28,6 +28,8 @@ public class Order {
 
   private BigDecimal size;
 
+  private BigDecimal matchedSize;
+
   private BigDecimal price;
 
   private OrderStatus status;
