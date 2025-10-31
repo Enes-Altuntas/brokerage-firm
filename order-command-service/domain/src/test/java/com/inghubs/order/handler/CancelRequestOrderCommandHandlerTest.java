@@ -67,14 +67,19 @@ class CancelRequestOrderCommandHandlerTest {
             return null;
         }).when(transactionTemplate).executeWithoutResult(any());
 
+        doAnswer(invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            runnable.run();
+            return null;
+        }).when(lockPort).execute(any(Runnable.class), any(String[].class));
+
         commandHandler.handle(command);
 
-        verify(lockPort).lock(orderId);
+        verify(lockPort).execute(any(Runnable.class), org.mockito.ArgumentMatchers.eq(orderId.toString()));
         verify(orderPort).retrieveOrder(orderId, customerId);
         assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCEL_REQUESTED);
         verify(orderPort).createOrUpdateOrder(order);
-        verify(outboxPort).createOrderOutboxEntity(CancelRequestOrderCommandHandler.ORDER_CANCEL_REQUESTED, order);
-        verify(lockPort).unlock(orderId);
+        verify(outboxPort).createOrderOutboxEntity(CancelRequestOrderCommandHandler.ORDER_CANCEL_REQUESTED, order.getId(), order);
     }
 
     @Test
@@ -88,11 +93,17 @@ class CancelRequestOrderCommandHandlerTest {
 
         when(orderPort.retrieveOrder(orderId, customerId)).thenReturn(null);
 
+        doAnswer(invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            runnable.run();
+            return null;
+        }).when(lockPort).execute(any(Runnable.class), any(String[].class));
+
         assertThatThrownBy(() -> commandHandler.handle(command))
                 .isInstanceOf(OrderBusinessException.class)
                 .hasMessage("2000");
 
-        verify(lockPort).lock(orderId);
+        verify(lockPort).execute(any(Runnable.class), org.mockito.ArgumentMatchers.eq(orderId.toString()));
     }
 
     @Test
@@ -111,10 +122,16 @@ class CancelRequestOrderCommandHandlerTest {
 
         when(orderPort.retrieveOrder(orderId, customerId)).thenReturn(order);
 
+        doAnswer(invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            runnable.run();
+            return null;
+        }).when(lockPort).execute(any(Runnable.class), any(String[].class));
+
         assertThatThrownBy(() -> commandHandler.handle(command))
                 .isInstanceOf(OrderBusinessException.class)
                 .hasMessage("2001");
 
-        verify(lockPort).lock(orderId);
+        verify(lockPort).execute(any(Runnable.class), org.mockito.ArgumentMatchers.eq(orderId.toString()));
     }
 }

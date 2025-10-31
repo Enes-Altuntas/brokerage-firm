@@ -64,6 +64,6 @@ class CreateOrderCommandHandlerTest {
         verify(orderPort).createOrUpdateOrder(orderCaptor.capture());
         assertThat(orderCaptor.getValue().getStatus()).isEqualTo(com.inghubs.order.model.enums.OrderStatus.INIT);
 
-        verify(outboxPort).createOrderOutboxEntity(eq(CreateOrderCommandHandler.ORDER_CREATED), any(Order.class));
+        verify(outboxPort).createOrderOutboxEntity(eq(CreateOrderCommandHandler.ORDER_CREATED), eq(orderCaptor.getValue().getId()), any());
     }
 }

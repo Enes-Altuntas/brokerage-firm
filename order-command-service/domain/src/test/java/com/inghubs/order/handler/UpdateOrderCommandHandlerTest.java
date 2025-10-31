@@ -76,14 +76,19 @@ class UpdateOrderCommandHandlerTest {
             return null;
         }).when(transactionTemplate).executeWithoutResult(any());
 
+        doAnswer(invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            runnable.run();
+            return null;
+        }).when(lockPort).execute(any(Runnable.class), any(String[].class));
+
         commandHandler.handle(command);
 
-        verify(lockPort).lock(orderId);
+        verify(lockPort).execute(any(Runnable.class), org.mockito.ArgumentMatchers.eq(orderId.toString()));
         assertThat(order.getStatus()).isEqualTo(OrderStatus.PENDING);
         verify(orderPort).createOrUpdateOrder(order);
-        verify(inboxPort).createInboxEntity(command);
-        verify(outboxPort).createOrderOutboxEntity(UpdateOrderCommandHandler.ORDER_UPDATED, order);
-        verify(lockPort).unlock(orderId);
+        verify(inboxPort).createInboxEntity(command.getOutboxId(), command.getEventType(), command.getOrder().getId(), order);
+        verify(outboxPort).createOrderOutboxEntity(UpdateOrderCommandHandler.ORDER_UPDATED, order.getId(), order);
     }
 
     @Test
@@ -110,14 +115,20 @@ class UpdateOrderCommandHandlerTest {
             return null;
         }).when(transactionTemplate).executeWithoutResult(any());
 
+        // make lockPort.execute run the runnable immediately
+        doAnswer(invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            runnable.run();
+            return null;
+        }).when(lockPort).execute(any(Runnable.class), any(String[].class));
+
         commandHandler.handle(command);
 
-        verify(lockPort).lock(orderId);
+        verify(lockPort).execute(any(Runnable.class), org.mockito.ArgumentMatchers.eq(orderId.toString()));
         assertThat(order.getStatus()).isEqualTo(OrderStatus.REJECTED);
         verify(orderPort).createOrUpdateOrder(order);
-        verify(inboxPort).createInboxEntity(command);
-        verify(outboxPort).createOrderOutboxEntity(UpdateOrderCommandHandler.ORDER_UPDATED, order);
-        verify(lockPort).unlock(orderId);
+        verify(inboxPort).createInboxEntity(command.getOutboxId(), command.getEventType(), command.getOrder().getId(), order);
+        verify(outboxPort).createOrderOutboxEntity(UpdateOrderCommandHandler.ORDER_UPDATED, order.getId(), order);
     }
 
     @Test
@@ -134,9 +145,16 @@ class UpdateOrderCommandHandlerTest {
 
         when(inboxPort.retrieveInboxById(outboxId)).thenReturn(Inbox.builder().build());
 
+        // make lockPort.execute run the runnable immediately
+        doAnswer(invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            runnable.run();
+            return null;
+        }).when(lockPort).execute(any(Runnable.class), any(String[].class));
+
         commandHandler.handle(command);
 
-        verify(lockPort).lock(orderId);
+        verify(lockPort).execute(any(Runnable.class), org.mockito.ArgumentMatchers.eq(orderId.toString()));
         verify(orderPort, never()).retrieveOrder(any(), any());
     }
 
@@ -159,10 +177,16 @@ class UpdateOrderCommandHandlerTest {
         when(inboxPort.retrieveInboxById(outboxId)).thenReturn(null);
         when(orderPort.retrieveOrder(orderId, customerId)).thenReturn(order);
 
+        doAnswer(invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            runnable.run();
+            return null;
+        }).when(lockPort).execute(any(Runnable.class), any(String[].class));
+
         assertThatThrownBy(() -> commandHandler.handle(command))
                 .isInstanceOf(OrderBusinessException.class)
                 .hasMessage("2001");
 
-        verify(lockPort).lock(orderId);
+        verify(lockPort).execute(any(Runnable.class), org.mockito.ArgumentMatchers.eq(orderId.toString()));
     }
 }
