@@ -1,0 +1,678 @@
+{
+	"info": {
+		"_postman_id": "2ca80bc1-47a2-4df1-a2ae-6f190773c3a0",
+		"name": "ING Brokerage",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38894904",
+		"_collection_link": "https://moneypayfinansaldeveloper.postman.co/workspace/My-Workspace~72735e14-ea6b-41de-8b5d-ea91fcc14fdf/collection/38894904-2ca80bc1-47a2-4df1-a2ae-6f190773c3a0?action=share&source=collection_link&creator=38894904"
+	},
+	"item": [
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Create Order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "token-admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customerId\": \"70da43fa-d215-47c7-a75f-c01b1151fd37\",\n    \"assetName\": \"AKBNK\",\n    \"side\": \"BUY\",\n    \"price\": 1000.0,\n    \"size\": 3.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9050/order-command/api/v1/admin/order",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9050",
+							"path": [
+								"order-command",
+								"api",
+								"v1",
+								"admin",
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "token-admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customerId\": \"d617deb3-4000-459c-bcfb-d5b08454d061\",\n    \"orderId\": \"cb1010e3-dd32-4156-b8b6-a1d11b8fdfc4\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9050/order-command/api/v1/admin/order/cancel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9050",
+							"path": [
+								"order-command",
+								"api",
+								"v1",
+								"admin",
+								"order",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Orders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "token-admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9050/order-query/api/v1/admin/order/list?page=0&size=5&customerId=3cd0ec94-f6d6-41e8-84e1-b8bb1f574953",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9050",
+							"path": [
+								"order-query",
+								"api",
+								"v1",
+								"admin",
+								"order",
+								"list"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "customerId",
+									"value": "3cd0ec94-f6d6-41e8-84e1-b8bb1f574953"
+								},
+								{
+									"key": "status",
+									"value": "PENDING",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order By Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "token-admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9050/order-query/api/v1/admin/order?customerId=3cd0ec94-f6d6-41e8-84e1-b8bb1f574953&orderId=5a401aa6-1b54-4584-ad04-2e33ddb89b63",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9050",
+							"path": [
+								"order-query",
+								"api",
+								"v1",
+								"admin",
+								"order"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "3cd0ec94-f6d6-41e8-84e1-b8bb1f574953"
+								},
+								{
+									"key": "orderId",
+									"value": "5a401aa6-1b54-4584-ad04-2e33ddb89b63"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assets",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "token-admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9050/asset/api/v1/admin/asset/list?page=0&size=5&assetName=TRY",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9050",
+							"path": [
+								"asset",
+								"api",
+								"v1",
+								"admin",
+								"asset",
+								"list"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "customerId",
+									"value": "d617deb3-4000-459c-bcfb-d5b08454d061",
+									"disabled": true
+								},
+								{
+									"key": "assetName",
+									"value": "TRY"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Asset By Name",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "token-admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9050/asset/api/v1/admin/asset?page=0&size=5&customerId=d617deb3-4000-459c-bcfb-d5b08454d061&assetName=AFYON",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9050",
+							"path": [
+								"asset",
+								"api",
+								"v1",
+								"admin",
+								"asset"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "customerId",
+									"value": "d617deb3-4000-459c-bcfb-d5b08454d061"
+								},
+								{
+									"key": "assetName",
+									"value": "AFYON"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Debezzium",
+			"item": [
+				{
+					"name": "Debezzium Order DB Initialize",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJ1cG4iOiJjNjNmZjFlNy00MTUxLTQzZjUtODRiMi01M2I4ZDkyMzBjN2IiLCJwdXJwb3NlIjoib3RwX3Rva2VuIiwidXNlcl9pZCI6ImM2M2ZmMWU3LTQxNTEtNDNmNS04NGIyLTUzYjhkOTIzMGM3YiIsInVzZXJfcHJvZHVjdHMiOlt7InByb2R1Y3QiOiJTWVNURU0iLCJwcm9kdWN0Um9sZSI6IkNPTEVORElfQURNSU4iLCJ1c2VyUm9sZSI6IkNPTEVORElfQURNSU4ifV0sImV4cCI6MTc1OTM5OTg3MiwiaWF0IjoxNzU5Mzk5NjkyLCJqdGkiOiJlMTEyNTMyYy03ZDkxLTRmMzUtYmJkNS1mNDRlM2ExM2E3YWEifQ.EjWhj4bL_7w_KWKYUpY2TsHw-xT3YNmI6HfddL6TTOA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"order-outbox-connector\",\n  \"config\": {\n    \"connector.class\": \"io.debezium.connector.postgresql.PostgresConnector\",\n    \"database.hostname\": \"orderdb\",\n    \"database.port\": \"5432\",\n    \"database.user\": \"admin\",\n    \"database.password\": \"admin\",\n    \"database.dbname\": \"order\",\n    \"database.server.name\": \"order_cdc_server\",\n    \"plugin.name\": \"pgoutput\",\n    \"table.include.list\": \"public.outbox\", \n    \"topic.prefix\": \"order\",\n    \"publication.name\": \"dbz_publication_order\",\n    \"slot.name\": \"dbz_slot_order\",\n    \"key.converter\": \"org.apache.kafka.connect.storage.StringConverter\",\n    \"value.converter\": \"org.apache.kafka.connect.json.JsonConverter\",\n    \"value.converter.schemas.enable\": \"false\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8083/connectors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Debezzium Asset DB Initialize",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1cG4iOiJjNjNmZjFlNy00MTUxLTQzZjUtODRiMi01M2I4ZDkyMzBjN2IiLCJwdXJwb3NlIjoib3RwX3Rva2VuIiwidXNlcl9pZCI6ImM2M2ZmMWU3LTQxNTEtNDNmNS04NGIyLTUzYjhkOTIzMGM3YiIsInVzZXJfcHJvZHVjdHMiOlt7InByb2R1Y3QiOiJTWVNURU0iLCJwcm9kdWN0Um9sZSI6IkNPTEVORElfQURNSU4iLCJ1c2VyUm9sZSI6IkNPTEVORElfQURNSU4ifV0sImV4cCI6MTc1OTM5OTg3MiwiaWF0IjoxNzU5Mzk5NjkyLCJqdGkiOiJlMTEyNTMyYy03ZDkxLTRmMzUtYmJkNS1mNDRlM2ExM2E3YWEifQ.EjWhj4bL_7w_KWKYUpY2TsHw-xT3YNmI6HfddL6TTOA"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"asset-outbox-connector\",\n  \"config\": {\n    \"connector.class\": \"io.debezium.connector.postgresql.PostgresConnector\",\n    \"database.hostname\": \"assetdb\",\n    \"database.port\": \"5432\",\n    \"database.user\": \"admin\",\n    \"database.password\": \"admin\",\n    \"database.dbname\": \"asset\",\n    \"database.server.name\": \"asset_cdc_server\",\n    \"plugin.name\": \"pgoutput\",             \n    \"table.include.list\": \"public.outbox\",\n    \"topic.prefix\": \"asset\",\n    \"publication.name\": \"dbz_publication_asset\",\n    \"slot.name\": \"dbz_slot_asset\",\n    \"key.converter\": \"org.apache.kafka.connect.storage.StringConverter\",\n    \"value.converter\": \"org.apache.kafka.connect.json.JsonConverter\",\n    \"value.converter.schemas.enable\": \"false\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8083/connectors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Debezzium Delete Connector",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/connectors/asset-outbox-connector",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors",
+								"asset-outbox-connector"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Debezzium Check Status of Outbox Connector",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/connectors/asset-outbox-connector/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"connectors",
+								"asset-outbox-connector",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer",
+			"item": [
+				{
+					"name": "Create Order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "token-customer-b",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"assetName\": \"AKBNK\",\n    \"side\": \"BUY\",\n    \"price\": 10000.0,\n    \"size\": 3.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9050/order-command/api/v1/order",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9050",
+							"path": [
+								"order-command",
+								"api",
+								"v1",
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "token-customer-b",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9050/order-command/api/v1/order/cancel/0ea573d2-b027-44c2-a870-1f49558eaa41",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9050",
+							"path": [
+								"order-command",
+								"api",
+								"v1",
+								"order",
+								"cancel",
+								"0ea573d2-b027-44c2-a870-1f49558eaa41"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Orders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "token-customer-a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9050/order-query/api/v1/order?page=0&size=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9050",
+							"path": [
+								"order-query",
+								"api",
+								"v1",
+								"order"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "status",
+									"value": "PENDING",
+									"disabled": true
+								},
+								{
+									"key": "orderId",
+									"value": "49ded8c3-4a1f-47b0-a19c-8b8b603f158a",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order by Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "token-customer-a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9050/order-query/api/v1/order/69b7dcde-a6c6-4ad6-8e0a-7757c9339f4f",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9050",
+							"path": [
+								"order-query",
+								"api",
+								"v1",
+								"order",
+								"69b7dcde-a6c6-4ad6-8e0a-7757c9339f4f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assets",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "token-customer-a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-customer-id",
+								"value": "cac6c18f-0aeb-47e0-a7d3-3abb4dd772bb",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:9050/asset/api/v1/asset?page=0&size=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9050",
+							"path": [
+								"asset",
+								"api",
+								"v1",
+								"asset"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "cac6c18f-0aeb-47e0-a7d3-3abb4dd772bb",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "assetName",
+									"value": "AEFES",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Asset By Name",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "token-customer-a",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9050/asset/api/v1/asset/TRY",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9050",
+							"path": [
+								"asset",
+								"api",
+								"v1",
+								"asset",
+								"TRY"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
