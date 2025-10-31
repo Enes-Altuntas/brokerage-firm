@@ -37,4 +37,15 @@ public class OrderDataAdapter implements OrderPort {
 
     return entity.map(OrderEntity::toDomain).orElse(null);
   }
+
+  @Override
+  public Order retrieveOrder(UUID orderId) {
+    Optional<OrderEntity> entity = orderRepository.findById(orderId);
+
+    if (entity.isEmpty()) {
+      return null;
+    }
+
+    return entity.map(OrderEntity::toDomain).orElse(null);
+  }
 }

@@ -33,25 +33,25 @@ public class CancelRequestOrderCommandHandler extends ObservableCommandPublisher
 
   @Override
   public void handle(CancelRequestOrderCommand command) {
-    lockPort.lock(command.getOrderId());
+    lockPort.execute(() -> {
 
-    Order order = orderPort.retrieveOrder(command.getOrderId(), command.getCustomerId());
+      Order order = orderPort.retrieveOrder(command.getOrderId(), command.getCustomerId());
 
-    if (order == null) {
-      throw new OrderBusinessException("2000");
-    }
+      if (order == null) {
+        throw new OrderBusinessException("2000");
+      }
 
-    if(order.getStatus() != OrderStatus.PENDING) {
-      throw new OrderBusinessException("2001");
-    }
+      if(order.getStatus() != OrderStatus.PENDING) {
+        throw new OrderBusinessException("2001");
+      }
 
-    order.requestCancel();
+      order.requestCancel();
 
-    transactionTemplate.executeWithoutResult(status -> {
-      orderPort.createOrUpdateOrder(order);
-      outboxPort.createOrderOutboxEntity(ORDER_CANCEL_REQUESTED, order);
-    });
+      transactionTemplate.executeWithoutResult(status -> {
+        orderPort.createOrUpdateOrder(order);
+        outboxPort.createOrderOutboxEntity(ORDER_CANCEL_REQUESTED, order);
+      });
 
-    lockPort.unlock(command.getOrderId());
+    }, command.getOrderId().toString());
   }
 }

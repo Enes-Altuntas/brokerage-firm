@@ -42,36 +42,36 @@ public class UpdateOrderCommandHandler extends ObservableCommandPublisher
 
   @Override
   public void handle(UpdateOrderCommand command) {
-    lockPort.lock(command.getOrder().getId());
+    lockPort.execute(() -> {
 
-    Inbox inbox = inboxPort.retrieveInboxById(command.getOutboxId());
-    if (inbox != null) {
-      return;
-    }
+      Inbox inbox = inboxPort.retrieveInboxById(command.getOutboxId());
+      if (inbox != null) {
+        return;
+      }
 
-    Order order = orderPort.retrieveOrder(command.getOrder().getId(),
-        command.getOrder().getCustomerId());
+      Order order = orderPort.retrieveOrder(command.getOrder().getId(),
+          command.getOrder().getCustomerId());
 
-    if (order == null) {
-      throw new OrderBusinessException("2000");
-    }
+      if (order == null) {
+        throw new OrderBusinessException("2000");
+      }
 
-    if(order.getStatus() != OrderStatus.INIT) {
-      throw new OrderBusinessException("2001");
-    }
+      if(order.getStatus() != OrderStatus.INIT) {
+        throw new OrderBusinessException("2001");
+      }
 
-    if(command.getEventType().equals(ORDER_VALIDATED)) {
-      order.reserve();
-    } else if(command.getEventType().equals(ORDER_REJECTED)) {
-      order.reject();
-    }
+      if(command.getEventType().equals(ORDER_VALIDATED)) {
+        order.reserve();
+      } else if(command.getEventType().equals(ORDER_REJECTED)) {
+        order.reject();
+      }
 
-    transactionTemplate.executeWithoutResult(status -> {
-      orderPort.createOrUpdateOrder(order);
-      inboxPort.createInboxEntity(command);
-      outboxPort.createOrderOutboxEntity(ORDER_UPDATED, order);
-    });
+      transactionTemplate.executeWithoutResult(status -> {
+        orderPort.createOrUpdateOrder(order);
+        inboxPort.createInboxEntity(command);
+        outboxPort.createOrderOutboxEntity(ORDER_UPDATED, order);
+      });
 
-    lockPort.unlock(command.getOrder().getId());
+    }, command.getOrder().getId().toString());
   }
 }

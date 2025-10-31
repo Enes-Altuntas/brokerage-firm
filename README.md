@@ -34,9 +34,10 @@ With the start of the **order command service**, assets will be automatically up
 ---
 ##  🧠 What's Missing !
 
-- More compensations can be developed after tests.
-- Develop a real auth service or implement keycloak to api-gw
-- May develop a notifications service or implement alert manager like grafana for DLT
+- More **compensation events** can be developed after tests.
+- Develop a real **auth service** or implement **keycloak** to api-gw
+- May develop a **notifications service** or implement alert manager like **grafana** for **DLT**
+- For more reliability may implement **Circuit Breaker** pattern
 ---
 ## 📈 Highlights
 

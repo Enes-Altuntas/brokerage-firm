@@ -9,4 +9,6 @@ public interface OrderPort {
 
   Order retrieveOrder(UUID orderId, UUID customerId);
 
+  Order retrieveOrder(UUID orderId);
+
 }

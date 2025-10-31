@@ -1,10 +1,8 @@
 package com.inghubs.lock.port;
 
-import java.util.UUID;
-
 public interface LockPort {
 
-  void lock(UUID orderId);
+  void execute(Runnable task,
+      String... lockKeys);
 
-  void unlock(UUID orderId);
 }
