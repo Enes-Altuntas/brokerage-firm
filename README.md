@@ -1,4 +1,4 @@
-# 🏦 Brokerage Backend (Event-Driven, CQRS)
+# 🏦 Brokerage Backend (SAGA Chareography, Inbox/Outbox, CQRS)
 
 A minimal **brokerage backend** for handling BUY/SELL orders, cancellations, and matches.  
 Built with **Spring Boot**, **Kafka**, **PostgreSQL (Debezium CDC)**, **ElasticSearch**, **Redis**, and a **mock-auth Gateway**.
