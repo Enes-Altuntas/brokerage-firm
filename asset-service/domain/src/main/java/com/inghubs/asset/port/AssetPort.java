@@ -7,6 +7,6 @@ public interface AssetPort {
 
   Asset retrieveCustomerAsset(String assetName, UUID customerId);
 
-  Asset updateOrSaveAsset(Asset asset);
+  Asset createOrUpdateAsset(Asset asset);
 
 }

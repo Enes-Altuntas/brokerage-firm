@@ -11,6 +11,7 @@ import com.inghubs.common.rest.model.PaginationRequest;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AssetDataAdapter implements AssetPort, AssetQueryService {
@@ -26,9 +28,11 @@ public class AssetDataAdapter implements AssetPort, AssetQueryService {
 
   @Override
   public Asset retrieveCustomerAsset(String assetName, UUID customerId) {
+    log.info("Retrieving asset for customer: {} and asset: {}", customerId, assetName);
     Optional<AssetEntity> entity = assetRepository.findByIdAssetNameAndIdCustomerId(assetName, customerId);
 
     if(entity.isEmpty()) {
+      log.warn("Asset not found for customer: {} and asset: {}", customerId, assetName);
       return null;
     }
 
@@ -36,17 +40,19 @@ public class AssetDataAdapter implements AssetPort, AssetQueryService {
   }
 
   @Override
-  public Asset updateOrSaveAsset(Asset asset) {
+  public Asset createOrUpdateAsset(Asset asset) {
+    log.info("Updating or saving asset for customer: {} and asset: {}", asset.getCustomerId(), asset.getAssetName());
     AssetEntity entity = new AssetEntity(asset);
 
     AssetEntity savedEntity = assetRepository.save(entity);
 
+    log.info("Successfully updated or saved asset for customer: {} and asset: {}", asset.getCustomerId(), asset.getAssetName());
     return savedEntity.toDomain();
   }
 
   @Override
   public Page<AssetEntity> query(AssetFilterRequest filterRequest, PaginationRequest paginationRequest) {
-
+    log.info("Querying assets with filter: {} and pagination: {}", filterRequest, paginationRequest);
     Pageable pageable = buildPageable(paginationRequest);
 
     Specification<AssetEntity> assetEntitySpecification = AssetSpecification.filterAssets(
@@ -57,7 +63,7 @@ public class AssetDataAdapter implements AssetPort, AssetQueryService {
 
   @Override
   public AssetEntity query(AssetFilterRequest filterRequest) {
-
+    log.info("Querying asset with filter: {}", filterRequest);
     Optional<AssetEntity> entity = assetRepository.findByIdAssetNameAndIdCustomerId(
         filterRequest.getAssetName(), filterRequest.getCustomerId());
 

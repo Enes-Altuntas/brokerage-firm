@@ -1,9 +1,9 @@
 package com.inghubs.outbox.port;
 
-import com.inghubs.order.model.Order;
+import java.util.UUID;
 
 public interface OutboxPort {
 
-  void createOrderOutboxEntity(String eventType, Order order);
+  void createOrderOutboxEntity(String eventType, UUID aggregateId, Object payloadObject);
 
 }

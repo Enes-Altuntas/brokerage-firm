@@ -1,7 +1,7 @@
 package com.inghubs.asset.handler;
 
-import com.inghubs.asset.command.UpdateAssetCommand;
-import com.inghubs.asset.factory.abstracts.UpdateAssetStrategyFactory;
+import com.inghubs.asset.command.RollbackAssetCommand;
+import com.inghubs.asset.factory.abstracts.CancelAssetStrategyFactory;
 import com.inghubs.common.command.ObservableCommandPublisher;
 import com.inghubs.common.command.VoidCommandHandler;
 import com.inghubs.inbox.model.Inbox;
@@ -12,24 +12,24 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class UpdateAssetCommandHandler extends ObservableCommandPublisher
-    implements VoidCommandHandler<UpdateAssetCommand> {
+public class RollbackAssetCommandHandler extends ObservableCommandPublisher
+    implements VoidCommandHandler<RollbackAssetCommand> {
 
   private final InboxPort inboxPort;
   private final LockPort lockPort;
-  private final UpdateAssetStrategyFactory updateAssetStrategyFactory;
+  private final CancelAssetStrategyFactory cancelAssetStrategyFactory;
 
-  public UpdateAssetCommandHandler(InboxPort inboxPort, LockPort lockPort,
-      UpdateAssetStrategyFactory updateAssetStrategyFactory) {
+  public RollbackAssetCommandHandler(InboxPort inboxPort, LockPort lockPort,
+      CancelAssetStrategyFactory cancelAssetStrategyFactory) {
     this.inboxPort = inboxPort;
     this.lockPort = lockPort;
-    this.updateAssetStrategyFactory = updateAssetStrategyFactory;
-    register(UpdateAssetCommand.class, this);
+    this.cancelAssetStrategyFactory = cancelAssetStrategyFactory;
+    register(RollbackAssetCommand.class, this);
   }
 
   @Override
-  public void handle(UpdateAssetCommand command) {
-    log.info("Handling UpdateAssetCommand for order: {}", command.getOrder().getId());
+  public void handle(RollbackAssetCommand command) {
+    log.info("Handling RollbackAssetCommand for order: {}", command.getOrder().getId());
 
     lockPort.execute(() -> {
 
@@ -39,10 +39,10 @@ public class UpdateAssetCommandHandler extends ObservableCommandPublisher
         return;
       }
 
-      updateAssetStrategyFactory.updateAsset(command);
+      cancelAssetStrategyFactory.cancelAsset(command);
 
     }, command.getOrder().getCustomerId().toString() + ":" + command.getOrder().getAssetName());
 
-    log.info("Finished handling UpdateAssetCommand for order: {}", command.getOrder().getId());
+    log.info("Finished handling RollbackAssetCommand for order: {}", command.getOrder().getId());
   }
 }

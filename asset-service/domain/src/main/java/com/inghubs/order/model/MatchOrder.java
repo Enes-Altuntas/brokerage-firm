@@ -1,14 +1,19 @@
-package com.inghubs.order.command;
+package com.inghubs.order.model;
 
-import com.inghubs.common.model.Command;
 import java.math.BigDecimal;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
 @Getter
 @Builder
-public class MatchRequestOrderCommand implements Command {
+@NoArgsConstructor
+@AllArgsConstructor
+public class MatchOrder {
 
   private UUID buyOrderId;
 

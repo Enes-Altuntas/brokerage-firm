@@ -56,6 +56,7 @@ public class MatchRequestOrderCommandHandler  extends ObservableCommandPublisher
 
       BigDecimal matchPrice = sellOrder.getPrice();
       BigDecimal matchSize = buyOrder.getSize().min(sellOrder.getSize());
+      BigDecimal priceDifference = buyOrder.getPrice().subtract(sellOrder.getPrice());
 
       MatchRequestOrderCommand event = MatchRequestOrderCommand.builder()
           .buyOrderId(buyOrder.getId())
@@ -65,6 +66,7 @@ public class MatchRequestOrderCommandHandler  extends ObservableCommandPublisher
           .buyerCustomerId(buyOrder.getCustomerId())
           .sellerCustomerId(sellOrder.getCustomerId())
           .assetName(buyOrder.getAssetName())
+          .priceDifference(priceDifference)
           .build();
       outboxPort.createOrderOutboxEntity(event);
 
