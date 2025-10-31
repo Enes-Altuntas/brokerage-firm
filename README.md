@@ -63,15 +63,15 @@ With the start of the **order command service**, assets will be automatically up
 
 ### ⚙️ Technology Stack
 
-| Component | Technology |
-|------------|----------|
-| **Language** | Java 21 |
-| **Framework** | Spring Boot 3.x |
+| Component | Technology                   |
+|------------|------------------------------|
+| **Language** | Java 21                      |
+| **Framework** | Spring Boot 3.x              |
 | **Database** | PostgreSQL with Debezium CDC |
-| **Message Broker** | Apache Kafka |
-| **Cache / Locking** | Redis |
-| **Read Model** | ElasticSearch |
-| **Testing** | JUnit 5 |
+| **Message Broker** | Apache Kafka                 |
+| **Cache / Locking** | Redis                        |
+| **Read Model** | ElasticSearch                |
+| **Testing** | JUnit 5 - Mockito            |
 
 ---
 
@@ -109,4 +109,4 @@ With the start of the **order command service**, assets will be automatically up
     - Increases BUYER’s stock.
     - Adjusts TRY balances.
     - Publishes `ORDER_MATCHED`.
-4. **OrderService** updates both orders → `MATCHED`.
+4. **OrderService** updates both orders → `MATCHED` OR `PARTIALLY_MATCHED`.
