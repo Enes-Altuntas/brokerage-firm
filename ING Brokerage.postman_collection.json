@@ -294,6 +294,49 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Match Order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "token-admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sellOrderId\": \"ca7f504d-0647-440c-8819-f1052fb5aee6\",\n    \"buyOrderId\": \"f07f28fa-0282-4102-a202-68e6a8a8c568\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9050/order-command/api/v1/admin/order/match",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9050",
+							"path": [
+								"order-command",
+								"api",
+								"v1",
+								"admin",
+								"order",
+								"match"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -438,7 +481,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"assetName\": \"AKBNK\",\n    \"side\": \"BUY\",\n    \"price\": 10000.0,\n    \"size\": 3.0\n}",
+							"raw": "{\n    \"assetName\": \"AKBNK\",\n    \"side\": \"SELL\",\n    \"price\": 150.0,\n    \"size\": 2.0\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -470,7 +513,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "token-customer-b",
+									"value": "token-customer-a",
 									"type": "string"
 								}
 							]
@@ -478,7 +521,7 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:9050/order-command/api/v1/order/cancel/0ea573d2-b027-44c2-a870-1f49558eaa41",
+							"raw": "http://localhost:9050/order-command/api/v1/order/cancel/d748d016-5400-4adf-9584-38468e4b644a",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -490,7 +533,7 @@
 								"v1",
 								"order",
 								"cancel",
-								"0ea573d2-b027-44c2-a870-1f49558eaa41"
+								"d748d016-5400-4adf-9584-38468e4b644a"
 							]
 						}
 					},
